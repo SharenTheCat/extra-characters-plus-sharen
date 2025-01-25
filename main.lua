@@ -838,6 +838,38 @@ extraCharacters = {
             [CHAR_SOUND_YAH_WAH_HOO] = { "dk_yah_wah_hoo1.ogg", "dk_yah_wah_hoo2.ogg", "dk_yah_wah_hoo3.ogg"},
             --[CHAR_SOUND_HELLO] = "dk_hello.ogg"
         },
+        anims = {
+            [CHAR_ANIM_IDLE_HEAD_CENTER] = 'donkey_idle_3',
+            [CHAR_ANIM_IDLE_HEAD_LEFT] = 'donkey_idle_1',
+            [CHAR_ANIM_IDLE_HEAD_RIGHT] = 'donkey_idle_2',
+            [CHAR_ANIM_FIRST_PERSON] = 'donkey_first_person',
+            [CHAR_ANIM_SLOW_LEDGE_GRAB] = 'donkey_00_ledgeclimb',
+            [CHAR_ANIM_SKID_ON_GROUND] = 'donkey_0F_skid_on_ground',
+            [CHAR_ANIM_SHIVERING_RETURN_TO_IDLE] = 'donkey_1a_shivering_return_to_idle',
+            [CHAR_ANIM_FALL_OVER_BACKWARDS] = 'donkey_02_fall',
+            [CHAR_ANIM_LAND_ON_STOMACH] = 'donkey_2C_anim_land_on_stomach',
+            [CHAR_ANIM_SUFFOCATING] = 'donkey_2F_suffocating',
+            [CHAR_ANIM_LAND_FROM_DOUBLE_JUMP] = 'donkey_4B_land_from_double_jump',
+            [CHAR_ANIM_LAND_FROM_SINGLE_JUMP] = 'donkey_4D_land_from_single_jump',
+            [CHAR_ANIM_SLOW_LAND_FROM_DIVE] = 'donkey_5A_slow_land_from_dive',
+            [CHAR_ANIM_MISSING_CAP] = 'donkey_5E_missing_cap',
+            [CHAR_ANIM_PULL_DOOR_WALK_IN] = 'donkey_5F_pull_door_walk_in',
+            [CHAR_ANIM_STOP_SKID] = 'donkey_10_stop_skid',
+            [CHAR_ANIM_SHIVERING_WARMING_HAND] = 'donkey_19_shivering_warming_hand',
+            [CHAR_ANIM_CREDITS_RAISE_HAND] = 'donkey_20_credits_raide_hand',
+            [CHAR_ANIM_CREDITS_TAKE_OFF_CAP] = 'donkey_22_credits_take_off_cap',
+            [CHAR_ANIM_STAND_UP_FROM_LAVA_BOOST] = 'donkey_28_standup_from_lava_boost',
+            [CHAR_ANIM_THROW_CATCH_KEY] = 'donkey_31_throw_catch_key',
+            [CHAR_ANIM_FAST_LEDGE_GRAB] = 'donkey_34_fast_ledge_grab',
+            [CHAR_ANIM_PUT_CAP_ON] = 'donkey_36_put_cap_on',
+            [CHAR_ANIM_TAKE_CAP_OFF_THEN_ON] = 'donkey_37_take_cap_off_then_on',
+            [CHAR_ANIM_HEAD_STUCK_IN_GROUND] = 'donkey_39_head_stuck_in_ground',
+            [CHAR_ANIM_LEGS_STUCK_IN_GROUND] = 'donkey_55_legs_stuck_in_ground',
+            [CHAR_ANIM_GENERAL_LAND] = 'donkey_56_general_land',
+            [CHAR_ANIM_RUNNING] = 'donkey_72_running',
+            [CHAR_ANIM_GROUND_THROW] = 'donkey_65_ground_throw',
+            [CHAR_ANIM_PLACE_LIGHT_OBJ] = 'donkey_6E_place_light_obj',
+        }
     },
     --------------
     -- Rosalina --
@@ -1184,13 +1216,24 @@ local function on_character_sound(m, sound)
     end
 end
 
-local function on_character_snore(m)
+local function mario_update(m)
     if not CSloaded then return end
     for i = 1, #extraCharacters do
         if _G.charSelect.character_get_voice(m) == extraCharacters[i].voices then return _G.charSelect.voice.snore(m) end
+    end
+    --donkey
+    if _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[8].tablePos then
+        if m.action == ACT_WALKING then
+            m.marioBodyState.torsoAngle.x = 0
+            m.marioBodyState.torsoAngle.z = 0
+            --this remains here in case the animation is too fast for how fast dk moves, change the multiplier if it needs adjustment
+            --if m.actionTimer == 3 then
+            --  m.marioObj.header.gfx.animInfo.animAccel = m.marioObj.header.gfx.animInfo.animAccel * 0.8
+            --end
+        end
     end
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
 hook_event(HOOK_CHARACTER_SOUND, on_character_sound)
-hook_event(HOOK_MARIO_UPDATE, on_character_snore)
+hook_event(HOOK_MARIO_UPDATE, mario_update)
