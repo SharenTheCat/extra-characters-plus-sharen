@@ -894,7 +894,7 @@ extraCharacters = {
             [CHAR_ANIM_CROUCH_FROM_SLIDE_KICK] = 'donkey_8D_crouch_from_slide_kick',
             [CHAR_ANIM_CROUCH_FROM_FAST_LONGJUMP] = 'donkey_11_crouch_from_fast_long_jump',
             [CHAR_ANIM_CROUCH_FROM_SLOW_LONGJUMP] = 'donkey_12_crouch_from_slow_long_jump',
-            
+            [CHAR_ANIM_WALK_PANTING] = 'donkey_ba_walk_panting',
         }
     },
     --------------
