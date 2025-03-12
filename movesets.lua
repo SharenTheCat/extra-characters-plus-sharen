@@ -224,10 +224,52 @@ local function rosalina_on_pvp_attack(attacker, victim)
     end
 end
 
+-------------------------
+-- Wapeach Axe Attacks --
+-------------------------
+
+ACT_AXECHOP = allocate_mario_action(ACT_GROUP_STATIONARY | ACT_FLAG_STATIONARY | ACT_FLAG_ATTACKING)
+
+
+---@param m MarioState
+local function act_wapeach_axechop(m)
+    if m.actionTimer == 0 then
+        set_character_animation(m, CHAR_ANIM_BREAKDANCE)
+        smlua_anim_util_set_animation(m.marioObj, 'wapeach_axechop')
+        play_character_sound(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE)
+    end
+
+    if m.actionTimer >= 14 and m.actionTimer <= 40 then     m.marioBodyState.handState = 2    end
+
+    if m.actionTimer == 17 then
+        play_sound(SOUND_OBJ_POUNDING_LOUD, m.marioObj.header.gfx.cameraToObject)
+            -- shakey cam if you are close enough to petey (based on local player's camera)
+            if vec3f_length(m.marioObj.header.gfx.cameraToObject) < 1500 then
+                set_camera_shake_from_hit(SHAKE_SMALL_DAMAGE)
+            end
+    end
+
+    if is_anim_at_end(m) ~= 0 then
+        set_mario_action(m, ACT_IDLE, 0)
+    end
+
+    m.actionTimer = m.actionTimer + 1
+end
+hook_mario_action(ACT_AXECHOP, act_wapeach_axechop)
+
+---@param m MarioState
+---@param incomingAct integer
+local function wapeach_before_action(m, incomingAct)
+    if (incomingAct == ACT_PUNCHING or incomingAct == ACT_MOVE_PUNCHING) and m.controller.buttonDown & Z_TRIG ~= 0 then
+        return ACT_AXECHOP
+    end
+end
+
 local function on_character_select_load()
     local CT_PEACH = extraCharacters[2].tablePos
     local CT_DAISY = extraCharacters[3].tablePos
     local CT_ROSALINA = extraCharacters[9].tablePos
+    local CT_WAPEACH = extraCharacters[10].tablePos
     
     -- Peach
     _G.charSelect.character_hook_moveset(CT_PEACH, HOOK_MARIO_UPDATE, peach_update)
@@ -238,6 +280,9 @@ local function on_character_select_load()
     _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_ON_PVP_ATTACK, rosalina_on_pvp_attack)
     _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_ON_INTERACT, rosalina_on_interact)
     _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_BEFORE_SET_MARIO_ACTION, rosalina_before_action)
+    -- Wapeach
+    _G.charSelect.character_hook_moveset(CT_WAPEACH, HOOK_BEFORE_SET_MARIO_ACTION, wapeach_before_action)
+
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
