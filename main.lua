@@ -1253,7 +1253,7 @@ end
 
 local function mario_update(m)
     if not CSloaded then return end
-    if m.action == ACT_WALKING and _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[10].tablePos then
+    if m.action == ACT_WALKING and (_G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[10].tablePos or _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[9].tablePos) then
         m.marioBodyState.torsoAngle.x = 0
         m.marioBodyState.torsoAngle.z = 0
         --results in double step sounds when going at the usual 32 speed (sigh)

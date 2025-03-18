@@ -1240,6 +1240,110 @@ local function rosalina_before_action(m, nextAct)
 end
 
 hook_mario_action(ACT_SPINJUMP, { every_frame = act_spinjump }, INT_KICK)
+
+-------------------------
+-- Wapeach Axe Attacks --
+-------------------------
+
+local colObjLists = { OBJ_LIST_GENACTOR, OBJ_LIST_PUSHABLE, OBJ_LIST_SURFACE }
+
+ACT_AXECHOP = allocate_mario_action(ACT_GROUP_STATIONARY | ACT_FLAG_STATIONARY)
+
+---@param o Object
+local function bhv_axe_attack_init(o)
+    o.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE -- Allows you to change the position and angle
+    o.oDamageOrCoinValue = 1
+    o.oNumLootCoins = 0
+    o.oHealth = 0
+    o.hitboxRadius = 45
+    o.hitboxHeight = 45
+    o.hurtboxRadius = 45
+    o.hurtboxHeight = 45
+    o.hitboxDownOffset = 0
+    o.oInteractType = INTERACT_DAMAGE
+    cur_obj_scale(0.45)
+    cur_obj_become_tangible()
+
+    network_init_object(o, true, {})
+end
+
+---@param o Object
+local function bhv_axe_attack_loop(o)
+    for i, list in ipairs(colObjLists) do
+        local o2 = obj_get_first(list)
+        while o2 do
+            if o ~= o2 and obj_check_hitbox_overlap(o, o2) then
+                local bhv = get_id_from_behavior(o2.behavior)
+                if bhv ~= id_bhvBowser then
+                    o2.oInteractStatus = o2.oInteractStatus | ATTACK_FAST_ATTACK | INT_STATUS_WAS_ATTACKED | INT_STATUS_INTERACTED | INT_STATUS_TOUCHED_BOB_OMB
+                    o2.oVelY = o2.oVelY + 10
+                end
+            end
+            o2 = obj_get_next(o2)
+        end
+    end
+
+    if o.oTimer == 15 then
+        obj_mark_for_deletion(o)
+    end
+    
+end
+
+local id_bhvAxeAttack = hook_behavior(nil, OBJ_LIST_DESTRUCTIVE, true, bhv_axe_attack_init, bhv_axe_attack_loop)
+
+---@param m MarioState
+local function act_wapeach_axechop(m)
+
+local slope = -find_floor_slope(m, 0)
+m.faceAngle.x = slope
+m.marioObj.header.gfx.angle.x = slope
+
+    if m.actionTimer == 0 then
+        set_character_animation(m, CHAR_ANIM_BREAKDANCE)
+        smlua_anim_util_set_animation(m.marioObj, 'wapeach_axechop')
+        play_character_sound(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE)
+    end
+
+    if m.actionTimer >= 14 and m.actionTimer <= 40 then     m.marioBodyState.handState = 2    end
+
+    if m.actionTimer == 17 then
+        play_sound(SOUND_OBJ_POUNDING_LOUD, m.marioObj.header.gfx.cameraToObject)
+        if m.playerIndex == 0 then
+            local dist = 130
+            local x = m.pos.x + sins(m.faceAngle.y) * coss(m.faceAngle.x) * dist
+            local y = m.pos.y + sins(m.faceAngle.x) * dist
+            local z = m.pos.z + coss(m.faceAngle.y) * coss(m.faceAngle.x) * dist
+            spawn_sync_object(id_bhvAxeAttack, E_MODEL_NONE, x, y, z, function(o)
+                o.globalPlayerIndex = m.marioObj.globalPlayerIndex
+            end)
+        end
+            -- shakey cam if you are close enough to petey (based on local player's camera)
+            if vec3f_length(m.marioObj.header.gfx.cameraToObject) < 2000 then
+                set_camera_shake_from_hit(SHAKE_SMALL_DAMAGE)
+            end
+    end
+
+    if is_anim_at_end(m) ~= 0 then
+        set_mario_action(m, ACT_IDLE, 0)
+    end
+
+    m.actionTimer = m.actionTimer + 1
+end
+hook_mario_action(ACT_AXECHOP, act_wapeach_axechop)
+
+
+
+
+
+
+---@param m MarioState
+---@param incomingAct integer
+local function wapeach_before_action(m, incomingAct)
+    if (incomingAct == ACT_PUNCHING or incomingAct == ACT_MOVE_PUNCHING) and m.controller.buttonDown & Z_TRIG ~= 0 then
+        return ACT_AXECHOP
+    end
+end
+
 -------------
 ---  Main  --
 -------------
