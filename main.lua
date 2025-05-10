@@ -1207,11 +1207,13 @@ local CSloaded = false
 local function on_character_select_load()
     for i = 1, #extraCharacters do
         local char = extraCharacters[i]
-        char.tablePos = _G.charSelect.character_add(char.name, char.description, char.credits, char.color, char.model, char.forceChar, char.lifeIcon, char.camScale, char.offset, char.meter)
+        local tablePos = _G.charSelect.character_add(char.name, char.description, char.credits, char.color, char.model, char.forceChar, char.lifeIcon, char.camScale)
+        char.tablePos = tablePos
         if char.caps then _G.charSelect.character_add_caps(char.model, char.caps) end
         if char.voices then _G.charSelect.character_add_voice(char.model, char.voices) end
         if char.palette then _G.charSelect.character_add_palette_preset(char.model, char.palette) end
         if char.anims then _G.charSelect.character_add_animations(char.model, char.anims) end
+        _G.charSelect.character_set_category(tablePos, "CoopDX")
     end
 
     _G.charSelect.credit_add(TEXT_PACK_NAME, "FunkyLion", "Lead Dev")
@@ -1238,7 +1240,7 @@ local function on_character_select_load()
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Daisy")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "xLuigiGamerx", "Yoshi")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "EmilyEmmi", "Birdo")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Squishy6094", "Pauline")
+    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "PeachyPeach", "Pauline")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Rosalina")
 
     CSloaded = true
