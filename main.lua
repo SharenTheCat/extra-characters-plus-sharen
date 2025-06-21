@@ -1,9 +1,11 @@
 -- name: [CS] Extra Characters DEV
 -- description: [CS] Extra Characters Dev version\nBy: \\#00ff00\\ULTRA BROS TEAM\n\n\\#ffff00\\Ultra Bros Team:\n\\#ffffff\\FunkyLion\nMelzinoff\nFluffaMario\nSharen\nSquishy\n\n\\#f54e59\\Characters:\n\\#ffffff\\Toadette\nPeach\nDaisy\nYoshi\nBirdo\nForeman Spike\nPauline\nRosalina\nWaPeach
 
+local charSelect = charSelect
+
 local TEXT_PACK_NAME = "Extra Characters"
 
-if not _G.charSelectExists then
+if not charSelect then
     djui_popup_create("\\#ffffa0\\Extra Characters requires\nCharacter Select to be enabled.\n\nPlease rehost with it enabled.", 4)
     return
 end
@@ -1231,48 +1233,53 @@ local TEXT_MOVESET     = " (Movesets)"
 
 local CSloaded = false
 local function on_character_select_load()
-    for i = 1, #extraCharacters do
-        local char = extraCharacters[i]
-        char.tablePos = _G.charSelect.character_add(char.name, char.description, char.credits, char.color, char.model, char.forceChar, char.lifeIcon, char.camScale, char.offset, char.meter)
-        -- if char.caps then _G.charSelect.character_add_caps(char.model, char.caps) end
-        if char.voices then _G.charSelect.character_add_voice(char.model, char.voices) end
-        if char.palette then _G.charSelect.character_add_palette_preset(char.model, char.palette) end
-        if char.anims then _G.charSelect.character_add_animations(char.model, char.anims) end
-        -- if char.meter then _G.charSelect.character_add_health_meter(char.model, char.meter) end
+    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
+    for _, char in pairs(extraCharacters) do
+        local _ENV = setmetatable(char, { __index = _ENV })
+        tablePos = character_add(name, description, credits, color, model, forceChar, lifeIcon, camScale, offset, meter)
+        -- if caps then charSelect.character_add_caps(model, caps) end
+        if voices then character_add_voice(model, voices) end
+        if palette then character_add_palette_preset(model, palette) end
+        if anims then character_add_animations(model, anims) end
+        -- if meter then charSelect.character_add_health_meter(model, meter) end
     end
 
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "FunkyLion", "Lead Dev")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "Melzinoff", "Models / Animation")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "Sharen", "Animation")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "FluffaMario", "Models")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, 'Strawberii "Oreo"', "Icons")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "Chars_64", "Icons")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "WaterVapor", "Icons")
-    _G.charSelect.credit_add(TEXT_PACK_NAME, "Squishy6094", "Code Rewrite")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "MelissaMekrose", "Toadette")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "SuperKirbyLover", "Peach")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "MorphiGalaxi", "Daisy")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "FunkyLion", "Yoshi")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "LuUvvUCY", "Birdo")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "VinnyVinesauce", "Spike")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "BeckyVO", "Pauline")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "GauntletQueen", "Rosalina")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "xLuigiGamerx", "Toadette")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Peach")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Daisy")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "xLuigiGamerx", "Yoshi")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "EmilyEmmi", "Birdo")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "PeachyPeach", "Pauline")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Rosalina")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Melzinoff", "WaPeach")
+    credit_add(TEXT_PACK_NAME, "FunkyLion", "Lead Dev")
+    credit_add(TEXT_PACK_NAME, "Melzinoff", "Models / Animation")
+    credit_add(TEXT_PACK_NAME, "Sharen", "Animation")
+    credit_add(TEXT_PACK_NAME, "FluffaMario", "Models")
+    credit_add(TEXT_PACK_NAME, 'Strawberii "Oreo"', "Icons")
+    credit_add(TEXT_PACK_NAME, "Chars_64", "Icons")
+    credit_add(TEXT_PACK_NAME, "WaterVapor", "Icons")
+    credit_add(TEXT_PACK_NAME, "Squishy6094", "Code Rewrite")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "MelissaMekrose", "Toadette")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "SuperKirbyLover", "Peach")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "MorphiGalaxi", "Daisy")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "FunkyLion", "Yoshi")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "LuUvvUCY", "Birdo")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "VinnyVinesauce", "Spike")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "BeckyVO", "Pauline")
+    credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "GauntletQueen", "Rosalina")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "xLuigiGamerx", "Toadette")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Peach")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Daisy")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "xLuigiGamerx", "Yoshi")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "EmilyEmmi", "Birdo")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "PeachyPeach", "Pauline")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Rosalina")
+    credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Melzinoff", "WaPeach")
 
     CSloaded = true
 end
 
 local function on_character_sound(m, sound)
     if not CSloaded then return end
-    for i = 1, #extraCharacters do
-        if _G.charSelect.character_get_voice(m) == extraCharacters[i].voices then return _G.charSelect.voice.sound(m, sound) end
+
+    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
+
+    for _, char in pairs(extraCharacters) do
+        local _ENV = setmetatable(char, { __index = _ENV })
+        if character_get_voice(m) == voices then return voice.sound(m, sound) end
     end
 end
 
@@ -1280,14 +1287,12 @@ end
 
 local function mario_update(m)
     if not CSloaded then return end
-    if m.action == ACT_WALKING and _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[10].tablePos then
-        m.marioBodyState.torsoAngle.x = 0
-        m.marioBodyState.torsoAngle.z = 0
-        --results in double step sounds when going at the usual 32 speed (sigh)
-        m.marioObj.header.gfx.animInfo.animAccel = m.marioObj.header.gfx.animInfo.animAccel * 0.85
-    end
-    for i = 1, #extraCharacters do
-        if _G.charSelect.character_get_voice(m) == extraCharacters[i].voices then return _G.charSelect.voice.snore(m) end
+
+    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
+
+    for _, char in pairs(extraCharacters) do
+        local _ENV = setmetatable(char, { __index = _ENV })
+        if character_get_voice(m) == voices then return voice.snore(m) end
     end
 end
 

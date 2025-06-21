@@ -1,4 +1,5 @@
-if not _G.charSelectExists then return end
+local charSelect, OmmEnabled = charSelect, OmmEnabled
+if not charSelect then return end
 
 ---------------
 -- Constants --
@@ -147,7 +148,7 @@ local function get_pauline()
 end
 
 local function is_pauline(m)
-    return _G.charSelect.character_get_current_number(m.playerIndex) == get_pauline().tablePos
+    return charSelect.character_get_current_number(m.playerIndex) == get_pauline().tablePos
 end
 
 -----------
@@ -1175,7 +1176,7 @@ end
 local function cappy_update(m, cappy)
 
     -- Unload Cappy if...
-    if (_G.OmmEnabled or                                -- OMM Rebirth is enabled
+    if (OmmEnabled or                                -- OMM Rebirth is enabled
         not is_pauline(m) or                            -- Not Pauline
         not gNetworkPlayers[m.playerIndex].connected or -- Not connected
         not is_player_active(m)                         -- Not active
