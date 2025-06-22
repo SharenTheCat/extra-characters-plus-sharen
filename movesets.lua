@@ -319,10 +319,11 @@ function act_flutter(m)
         audio_sample_play(YOSHI_SOUND_FLUTTER, m.pos, 1) -- Play audio sample
     end
 
-    play_custom_anim(m, YOSHI_ANIM_FLUTTER, 2) -- Sets the animation
+    smlua_anim_util_set_animation(m.marioObj, YOSHI_ANIM_FLUTTER) -- Sets the animation
 
     m.marioBodyState.eyeState = MARIO_EYES_CLOSED -- Eye State
     m.vel.y = approach_f32(m.vel.y, m.actionTimer / 1.25, 8, 8) -- Height increases faster as the 1 second passes
+    m.marioObj.header.gfx.animInfo.animAccel = 65536 * 2 -- Animation Speed
 
     m.actionTimer = m.actionTimer + 1
     return false
