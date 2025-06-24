@@ -1682,7 +1682,7 @@ function update_spin_dashing(m, stopSpeed)
 
     update_sliding_angle(m, accel, lossFactor)
 
-    if (m.playerIndex == 0 and not mario_floor_is_slope(m) and m.forwardVel ^ 2 < stopSpeed ^ 2) then
+    if (m.playerIndex == 0 and not mario_floor_is_slope(m) and math.abs(m.forwardVel) < stopSpeed) then
         mario_set_forward_vel(m, 0.0)
         stopped = true
     end
@@ -1735,9 +1735,14 @@ end
 local function act_spin_dash_charge(m)
 
     local e = gStateExtras[m.playerIndex]
-
-    if m.input & INPUT_B_PRESSED ~= 0 then
-        e.spinCharge = math.min(e.spinCharge + 1, 8)
+    local MINDASH = 4
+    local MAXDASH = 128
+    local decel = (e.spinCharge / 0.32) / 512
+    
+    if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
+        e.spinCharge = math.min(e.spinCharge + 8, MAXDASH)
+    else
+        e.spinCharge = approach_f32_symmetric(e.spinCharge, MINDASH, decel)
     end
 
     set_mario_animation(m, CHAR_ANIM_A_POSE)
@@ -1749,7 +1754,7 @@ local function act_spin_dash_charge(m)
     m.marioObj.header.gfx.pos.y = m.pos.y + 50
 
     if m.input & INPUT_Z_DOWN == 0 then
-        mario_set_forward_vel(m, 32 * e.spinCharge)
+        mario_set_forward_vel(m, e.spinCharge)
         e.spinCharge = 0
         return set_mario_action(m, ACT_SPIN_DASH, 0)
     end
@@ -1767,13 +1772,23 @@ local function act_spin_dash(m)
     local stepResult = perform_ground_step(m)
 
     if stepResult == GROUND_STEP_HIT_WALL then
-        set_mario_particle_flags(m, ACTIVE_PARTICLE_H_STAR, 0)
-        return slide_bonk(m, ACT_GROUND_BONK, ACT_GROUND_BONK)
+        if m.forwardVel > 16 then
+            set_mario_particle_flags(m, ACTIVE_PARTICLE_H_STAR, 0)
+            return slide_bonk(m, ACT_GROUND_BONK, ACT_GROUND_BONK)
+        else
+            return set_mario_action(m, ACT_CROUCHING, 0)
+        end
     elseif stepResult == GROUND_STEP_LEFT_GROUND then
         return set_mario_action(m, ACT_JUMP, 0)
     end
 
-    update_spin_dashing(m, 0)
+
+    -- This ain't doin' shit. Needs to be looked into more.
+    local spinPhys = update_spin_dashing(m, 0)
+
+    if spinPhys ~= false then
+        return set_mario_action(m, ACT_CROUCHING, 0)
+    end
 
     m.faceAngle.x = m.faceAngle.x + 0x2000 * m.forwardVel / 32
     m.marioObj.header.gfx.angle.x = m.faceAngle.x
