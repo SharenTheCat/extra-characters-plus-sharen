@@ -2526,6 +2526,10 @@ function act_sonic_fall(m)
         end
     end
 
+    if (m.input & INPUT_B_PRESSED) ~= 0 then
+        set_mario_action(m, ACT_AIR_SPIN, 0)
+    end
+
     if (m.input & INPUT_Z_PRESSED) ~= 0 then
         return drop_and_set_mario_action(m, ACT_GROUND_POUND, 0)
     end
