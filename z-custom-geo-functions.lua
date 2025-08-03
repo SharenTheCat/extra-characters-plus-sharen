@@ -9,7 +9,7 @@ local sSonicSpinBallActs = {
 }
 
 local sSonicSpinDashActs = {
-    [ACT_SPIN_DASH_CHARGE]        = true,
+    [ACT_SPIN_DASH_CHARGE] = true,
 }
 
 --- @param n GraphNode | FnGraphNode

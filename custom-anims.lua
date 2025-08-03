@@ -1,4 +1,5 @@
-if not _G.charSelectExists then return end
+--- @diagnostic disable
+if not charSelect then return end
 
 ---------------------------------
 -- Character Select Animations --

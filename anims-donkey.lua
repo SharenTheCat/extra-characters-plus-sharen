@@ -1,8 +1,9 @@
-if not _G.charSelectExists then return end
+--- @diagnostic disable
+if not charSelect then return end
 
 -- Disables Torso Tilting to fix DK Walk
 local function mario_update(m)
-	if m.action == ACT_WALKING and _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[10].tablePos then
+	if m.action == ACT_WALKING and character_get_current_number() == CT_DONKEY_KONG then
         m.marioBodyState.torsoAngle.x = 0
         m.marioBodyState.torsoAngle.z = 0
         --results in double step sounds when going at the usual 32 speed (sigh)

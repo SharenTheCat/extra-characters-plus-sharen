@@ -2,11 +2,8 @@
 -- description: [CS] Extra Characters Dev version\nBy: \\#00ff00\\ULTRA BROS TEAM\n\n\\#ffff00\\Ultra Bros Team:\n\\#ffffff\\FunkyLion\nMelzinoff\nFluffaMario\nSharen\nSquishy\n\n\\#f54e59\\Characters:\n\\#ffffff\\Toadette\nPeach\nDaisy\nYoshi\nBirdo\nForeman Spike\nPauline\nRosalina\nWaPeach
 -- category: cs
 
-local charSelect = charSelect
-
 local TEXT_VANILLA_CAST = "CoopDX Characters"
 local TEXT_PACK_NAME = "Extra Characters"
-
 if not charSelect then
     djui_popup_create("\\#ffffa0\\Extra Characters requires\nCharacter Select to be enabled.\n\nPlease rehost with it enabled.", 4)
     return
@@ -88,7 +85,7 @@ extraCharacters = {
             [CHAR_SOUND_HELLO] = "toadette_hello.ogg"
         },
         anims = {
-        [charSelect.CS_ANIM_MENU] = 'cs_toadette',
+            [CS_ANIM_MENU] = 'cs_toadette',
         }
     },
     --------------------
@@ -243,7 +240,7 @@ extraCharacters = {
             [CHAR_ANIM_HOLDING_BOWSER] = 'princess_holding_bowser',
             [CHAR_ANIM_GRAB_BOWSER] = 'princess_grab_bowser',
             [CHAR_ANIM_BEND_KNESS_RIDING_SHELL] = "peach_dressfloating",
-            [charSelect.CS_ANIM_MENU] = 'cs_peach',
+            [CS_ANIM_MENU] = 'cs_peach',
         }
     },
     --------------------
@@ -1213,7 +1210,7 @@ extraCharacters = {
         animsets = {
             moveset = {
                 [CHAR_ANIM_RUNNING] = 'sonic_running',
-                --[charSelect.CS_ANIM_MENU] = 'sonic_idle_head_center',
+                --[CS_ANIM_MENU] = 'sonic_idle_head_center',
                 [CHAR_ANIM_SHIVERING_RETURN_TO_IDLE] = 'sonic_shivering_stop',
                 [CHAR_ANIM_TAKE_CAP_OFF_THEN_ON] = 'sonic_star_exit_with_hat',
                 [CHAR_ANIM_PUT_CAP_ON] = 'sonic_putting_on_hat',
@@ -1232,15 +1229,14 @@ local TEXT_MOVESET     = " (Movesets)"
 
 local CSloaded = false
 local function on_character_select_load()
-    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
     for i, char in pairs(extraCharacters) do
-        local _ENV = setmetatable(char, { __index = _ENV })
+        local _ENV = setmetatable(char, { __index = _G })
         tablePos = character_add(name, description, credits, color, model, forceChar, lifeIcon, camScale, offset, meter)
-        if caps then charSelect.character_add_caps(model, caps) end
+        if caps then character_add_caps(model, caps) end
         if voices then character_add_voice(model, voices) end
         if palette then character_add_palette_preset(model, palette) end
         if i ~= 11 and anims then character_add_animations(model, anims) end
-        -- if meter then charSelect.character_add_health_meter(model, meter) end
+        -- if meter then character_add_health_meter(model, meter) end
     end
 
     -- CoopDX Characters Voice Cast
@@ -1283,10 +1279,8 @@ end
 local function on_character_sound(m, sound)
     if not CSloaded then return end
 
-    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
-
     for _, char in pairs(extraCharacters) do
-        local _ENV = setmetatable(char, { __index = _ENV })
+        local _ENV = setmetatable(char, { __index = _G })
         if character_get_voice(m) == voices then return voice.sound(m, sound) end
     end
 end
@@ -1296,11 +1290,9 @@ end
 local function mario_update(m)
     if not CSloaded then return end
 
-    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
-
     do -- `do` to contain the sonic environment here
-        
-        local _ENV = setmetatable(extraCharacters[11], { __index = _ENV }) -- Sonic's enviroment
+        local sonicTable = extraCharacters[11]
+        local _ENV = setmetatable(sonicTable, { __index = _G }) -- Sonic's enviroment
         if get_options_status(6) ~= 0 and (not are_movesets_restricted()) then
             anims = animsets.moveset
         else
@@ -1310,9 +1302,8 @@ local function mario_update(m)
         if anims then character_add_animations(model, anims) end
 
     end
-
     for _, char in pairs(extraCharacters) do
-        local _ENV = setmetatable(char, { __index = _ENV })
+        local _ENV = setmetatable(char, { __index = _G })
         if character_get_voice(m) == voices then return voice.snore(m) end
     end
 end

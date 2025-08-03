@@ -1,4 +1,4 @@
-local charSelect, OmmEnabled = charSelect, OmmEnabled
+local OmmEnabled = OmmEnabled
 if not charSelect then return end
 
 ---------------
@@ -148,7 +148,7 @@ local function get_pauline()
 end
 
 local function is_pauline(m)
-    return charSelect.character_get_current_number(m.playerIndex) == get_pauline().tablePos
+    return character_get_current_number(m.playerIndex) == get_pauline().tablePos
 end
 
 -----------
