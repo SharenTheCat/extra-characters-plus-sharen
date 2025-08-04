@@ -2661,7 +2661,7 @@ local function sonic_before_phys_step(m)
         end
     end
 
-    if randomTimer > 0 then
+    if randomTimer > 0 and m.playerIndex == 0 then
         realFVel = math.sqrt((m.pos.x - lastforwardPos.x) ^ 2 + (m.pos.z - lastforwardPos.z) ^ 2)
         local speedAngle = atan2s(m.vel.z, m.vel.x)
         local intendedDYaw = m.faceAngle.y - speedAngle
@@ -2671,6 +2671,7 @@ local function sonic_before_phys_step(m)
         end
 
         lastforwardPos = {x = m.pos.x, z = m.pos.z}
+        --djui_chat_message_create(tostring(realFVel))
 
         randomTimer = 0
     end
@@ -2778,7 +2779,7 @@ local function on_character_select_load()
     character_hook_moveset(CT_SONIC, HOOK_ON_SET_MARIO_ACTION, on_set_sonic_action)
     character_hook_moveset(CT_SONIC, HOOK_ALLOW_INTERACT, sonic_allow_interact)
     character_hook_moveset(CT_SONIC, HOOK_ON_INTERACT, sonic_on_interact)
-    character_hook_moveset(CT_SONIC, HOOK_ALLOW_FORCE_WATER_ACTION, function () return false end) -- bro, just add the function here
+    character_hook_moveset(CT_SONIC, HOOK_ALLOW_FORCE_WATER_ACTION, function () return false end)
     character_hook_moveset(CT_SONIC, HOOK_MARIO_UPDATE, sonic_update)
     character_hook_moveset(CT_SONIC, HOOK_BEFORE_PHYS_STEP, sonic_before_phys_step)
 end
