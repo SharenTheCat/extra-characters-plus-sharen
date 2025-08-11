@@ -1139,7 +1139,6 @@ function sonic_homing_hud()
 
         if o and not e.sonic.actionADone then
             local pos = gVec3fZero()
-            local rotation = get_global_timer()
             scaleTimer = scaleTimer + 1
 
             if prevTarget ~= o then
@@ -1154,7 +1153,6 @@ function sonic_homing_hud()
                 djui_hud_render_texture_interpolated(TEX_HOMING_CURSOR, prevHudPos.x - 64 * prevScale, prevHudPos.y - 64 * prevScale, 8 * prevScale, 8 * prevScale, hudPos.x - 64 * scale, hudPos.y - 64 * scale, 8 * scale, 8 * scale)
                 vec3f_copy(prevHudPos, hudPos)
                 prevScale = scale
-                prevRotation = rotation
             end
         else
             scaleTimer = 0
