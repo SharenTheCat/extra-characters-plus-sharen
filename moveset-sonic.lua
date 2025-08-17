@@ -233,6 +233,8 @@ local function align_with_floor_but_better(m)
 end
 
 CUSTOM_CHAR_ANIM_SONIC_RUN = 'sonic_running_2'
+CUSTOM_CHAR_ANIM_SONIC_SPRING_RISE = 'sonic_spring'
+CUSTOM_CHAR_ANIM_SONIC_SPRING_FALL = 'sonic_spring_fall'
 
 --- @param m MarioState
 --- @param walkCap number
@@ -716,11 +718,11 @@ local function act_homing_attack(m)
             m.forwardVel = totalVel + 20
         end
 
-        m.faceAngle.y = yaw
-
         m.vel.y = math.abs(m.forwardVel) * sins(-pitch)
         m.vel.x = math.abs(m.forwardVel) * sins(yaw) * coss(pitch)
         m.vel.z = math.abs(m.forwardVel) * coss(yaw) * coss(pitch)
+
+        m.faceAngle.y = yaw
     end
 
     set_character_animation(m, CHAR_ANIM_A_POSE)
@@ -942,6 +944,15 @@ function act_sonic_fall(m)
                 animation = CHAR_ANIM_DOUBLE_JUMP_FALL
             end
             m.faceAngle.x = 0
+        elseif m.actionArg == 4 then
+            if m.vel.y > 0 then
+                animation = CHAR_ANIM_DOUBLE_JUMP_RISE
+                smlua_anim_util_set_animation(m.marioObj, CUSTOM_CHAR_ANIM_SONIC_SPRING_RISE)
+            else
+                animation = CHAR_ANIM_DOUBLE_JUMP_FALL
+                smlua_anim_util_set_animation(m.marioObj, CUSTOM_CHAR_ANIM_SONIC_SPRING_FALL)
+            end
+            m.faceAngle.x = 0
         end
         landAction = ACT_FREEFALL_LAND
     else
@@ -1000,7 +1011,7 @@ function on_set_sonic_action(m)
     end
 
     if m.action == ACT_TRIPLE_JUMP then
-        set_mario_action(m, ACT_SONIC_FALL, 3)
+        set_mario_action(m, ACT_SONIC_FALL, 4)
     end
 end
 

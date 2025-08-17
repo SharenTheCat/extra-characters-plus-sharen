@@ -1226,8 +1226,6 @@ extraCharacters = {
                 [CS_ANIM_MENU] = 'sonic_idle_head_center',
                 [CHAR_ANIM_STAR_DANCE] = 'sonic_victory',
                 [CHAR_ANIM_RETURN_FROM_STAR_DANCE] = 'sonic_after_victory',
-                [CHAR_ANIM_DOUBLE_JUMP_RISE] = 'sonic_spring',
-                [CHAR_ANIM_DOUBLE_JUMP_FALL] = 'sonic_spring_fall',
                 [CS_ANIM_MENU] = 'cs_sonic',
             },
             normal = {
