@@ -1152,7 +1152,7 @@ extraCharacters = {
         color = {r = 0, g = 0, b = 255},
         model = smlua_model_util_get_id("segasonic_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = gTextures.coin,
+        lifeIcon = get_texture_info("icon-segasonic"),
         camScale = 1,
         offset = 0,
         caps = {
