@@ -132,8 +132,6 @@ local function sonic_update_air(m)
     local targetSpeed = dragThreshold
     local fVel = math.sqrt(m.vel.x ^ 2 + m.vel.z ^ 2)
 
-    local airDrag = (fVel / 0.32) / 512
-
     local intendedDYaw = m.faceAngle.y - speedAngle
     local intendedMag = m.intendedMag / 32
 
@@ -143,26 +141,29 @@ local function sonic_update_air(m)
 
     m.forwardVel = fVel
 
-    if m.pos.y < m.waterLevel then
-        accel = 1
-    end
-
     if (check_horizontal_wind(m)) == 0 then
+
+        if m.pos.y < m.waterLevel then
+            accel = 1
+        end
+
         if (m.input & INPUT_NONZERO_ANALOG) ~= 0 then
             m.faceAngle.y = m.intendedYaw
-            if m.vel.y < 0 and m.vel.y > -8 then
-                targetSpeed = 0
-                accel = airDrag
+            if fVel > dragThreshold then
+                targetSpeed = fVel
             else
-                if fVel > dragThreshold then
-                    targetSpeed = fVel
-                else
-                    targetSpeed = dragThreshold
-                end
+                targetSpeed = dragThreshold
             end
 
             m.vel.x = approach_f32_symmetric(m.vel.x, targetSpeed * sins(m.intendedYaw) * intendedMag, accel)
             m.vel.z = approach_f32_symmetric(m.vel.z, targetSpeed * coss(m.intendedYaw) * intendedMag, accel)
+        end
+
+        local airDrag = (fVel / 0.125) / 256
+
+        if m.vel.y > 0 and m.vel.y < 32 then
+            m.vel.x = approach_f32_symmetric(m.vel.x, 0, airDrag)
+            m.vel.z = approach_f32_symmetric(m.vel.z, 0, airDrag)
         end
 
         --djui_chat_message_create(tostring(math.abs(speed) * sins(m.intendedYaw) * intendedMag))
@@ -479,6 +480,7 @@ local SOUND_SPIN_RELEASE  = audio_sample_load("spinrelease.ogg") -- Load audio s
 local SOUND_ROLL          = audio_sample_load("spinroll.ogg")   -- Load audio sample
 local SOUND_SONIC_BOUNCE  = audio_sample_load("sonicbounce.ogg")   -- Load audio sample
 local SOUND_SONIC_HOMING  = audio_sample_load("sonic_homing_select.ogg")   -- Load audio sample
+local SOUND_SONIC_INSTA  = audio_sample_load("sonicinstashield.ogg")   -- Load audio sample
 
 local sonicActionOverride = {
     [ACT_JUMP]         = ACT_SPIN_JUMP,
@@ -568,7 +570,7 @@ local function perform_sonic_a_action(m)
         m.vel.y = 30
     else
 
-        if not e.sonic.actionADone then
+        if not e.sonic.actionADone and e.sonic.instashieldTimer <= 0 then
             if o and dist < 1000 then
                 return set_mario_action(m, ACT_HOMING_ATTACK, 0)
             else
@@ -576,6 +578,19 @@ local function perform_sonic_a_action(m)
             end
         end
     end
+end
+
+--- @param m MarioState
+--- @return integer
+local function perform_sonic_b_action(m)
+    local e = gCharacterStates[m.playerIndex]
+
+    if e.sonic.actionBDone then return end
+
+    audio_sample_play(SOUND_SONIC_INSTA, m.pos, 1)
+    e.sonic.instashieldTimer = 7
+
+    e.sonic.actionBDone = true
 end
 
 ---@param m MarioState
@@ -589,6 +604,8 @@ local function act_spin_jump(m)
     end
 
     local spinSpeed = math.max(0.5, e.sonic.prevForwardVel / 32)
+    
+    if e.sonic.instashieldTimer > 0 then spinSpeed = 1.5 end
 
     set_character_animation(m, CHAR_ANIM_A_POSE)
     local stepResult = sonic_air_action_step(m, ACT_DOUBLE_JUMP_LAND, CHAR_ANIM_A_POSE, AIR_STEP_CHECK_HANG)
@@ -610,6 +627,10 @@ local function act_spin_jump(m)
         return perform_sonic_a_action(m)
     end
 
+    if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
+        perform_sonic_b_action(m)
+    end
+
 
     m.actionTimer = m.actionTimer + 1
 end
@@ -619,6 +640,8 @@ local function act_air_spin(m)
     local e = gCharacterStates[m.playerIndex]
 
     local spinSpeed = math.max(0.5, e.sonic.prevForwardVel / 32)
+    
+    if e.sonic.instashieldTimer > 0 then spinSpeed = 1.5 end
 
     set_character_animation(m, CHAR_ANIM_A_POSE)
     local stepResult = sonic_air_action_step(m, ACT_DOUBLE_JUMP_LAND, CHAR_ANIM_A_POSE, AIR_STEP_CHECK_HANG)
@@ -629,6 +652,10 @@ local function act_air_spin(m)
 
     if (m.input & INPUT_A_PRESSED) ~= 0 and m.actionTimer > 0 then
         return perform_sonic_a_action(m)
+    end
+
+    if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
+        return perform_sonic_b_action(m)
     end
 
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
@@ -788,7 +815,7 @@ local function act_spin_dash_charge(m)
     local e = gCharacterStates[m.playerIndex]
     local MINDASH = 4
     local MAXDASH = 128
-    local decel = (e.sonic.spinCharge / 0.32) / 512
+    local decel = (e.sonic.spinCharge / 0.125) / 256
 
     if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
         audio_sample_play(SOUND_SPIN_CHARGE, m.pos, 1)
@@ -801,7 +828,7 @@ local function act_spin_dash_charge(m)
     m.marioObj.header.gfx.animInfo.animID = -1
     stationary_ground_step(m)
 
-    if e.sonic.spindashState > 7 then
+    if math.floor(e.sonic.spindashState) > 7 then
         e.sonic.spindashState = 0
     end
 
@@ -917,6 +944,7 @@ end
 function act_sonic_fall(m)
     local animation = 0
     local landAction = 0
+    local e = gCharacterStates[m.playerIndex]
 
     if (m.input & INPUT_A_PRESSED) ~= 0 then
         return perform_sonic_a_action(m)
@@ -924,6 +952,7 @@ function act_sonic_fall(m)
 
     if (m.input & INPUT_B_PRESSED) ~= 0 then
         set_mario_action(m, ACT_AIR_SPIN, 0)
+        return perform_sonic_b_action(m)
     end
 
     if (m.input & INPUT_Z_PRESSED) ~= 0 then
@@ -979,6 +1008,11 @@ local waterActions = {
     [ACT_HOLD_WATER_JUMP]       = true,
     [ACT_HOLD_WATER_ACTION_END] = true,
     [ACT_BREASTSTROKE]          = true
+}
+
+local instashieldActions = {
+    [ACT_SPIN_JUMP]        = true,
+    [ACT_AIR_SPIN]         = true,
 }
 
 ---@param m MarioState
@@ -1042,6 +1076,8 @@ function sonic_update(m)
 
     if (m.action & ACT_FLAG_AIR) == 0 then
         e.sonic.actionADone = false
+        e.sonic.actionBDone = false
+        e.sonic.instashieldTimer = 0
     end
 
     -- Splash.
@@ -1058,6 +1094,23 @@ function sonic_update(m)
     if e.sonic.peakHeight - m.pos.y < 2000 then m.peakHeight = m.pos.y end
     if m.vel.y >= 0 or m.pos.y == m.floorHeight then e.sonic.peakHeight = m.pos.y end
 
+    -- Insta-shield attack. The best way I can do it for now.
+    if e.sonic.instashieldTimer > 0 and instashieldActions[m.action] then
+		for objList = 0, NUM_OBJ_LISTS - 1 do
+			local obj = obj_get_first(objList)
+			while obj ~= nil do
+				if (obj_is_attackable(obj) or obj_is_breakable_object(obj) or obj_has_behavior_id(obj, id_bhvBobomb) ~= 0) then
+					if (dist_between_objects(m.marioObj, obj) <= 280 and obj_is_valid_for_interaction(obj)) then
+						obj.oInteractStatus = ATTACK_KICK_OR_TRIP + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
+					end
+				end
+				obj = obj_get_next(obj)
+			end
+		end
+    end
+    
+    e.sonic.instashieldTimer = e.sonic.instashieldTimer - 1
+
     -- Drowning. Should it be added back?
     --[[if m.pos.y < m.waterLevel then
         m.health = m.health - 1
@@ -1072,6 +1125,13 @@ local bounceTypes = {
 }
 
 function sonic_allow_interact(m, o, intType)
+    local e = gCharacterStates[m.playerIndex]
+    
+    if e.sonic.instashieldTimer > 0 and instashieldActions[m.action] then
+        return false
+    end
+        
+
     if bounceTypes[intType] then
         prevVelY = m.vel.y
     end

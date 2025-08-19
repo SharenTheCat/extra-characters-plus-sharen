@@ -29,6 +29,12 @@ local sSonicSpinBallActs = {
     [ACT_HOMING_ATTACK]    = true,
 }
 
+
+local sSonicInstashieldActs = {
+    [ACT_SPIN_JUMP]        = true,
+    [ACT_AIR_SPIN]         = true,
+}
+
 local sSonicSpinDashActs = {
     [ACT_SPIN_DASH_CHARGE] = true,
 }
@@ -38,8 +44,15 @@ local sSonicSpinDashActs = {
 function geo_ball_switch(n)
     local switch = cast_graph_node(n)
     local m = geo_get_mario_state()
+    local e = gCharacterStates[m.playerIndex]
+
+
     if sSonicSpinBallActs[m.action] then
-        switch.selectedCase = ((m.actionTimer - 1) % 4 // 2 + 1)
+        if sSonicInstashieldActs[m.action] and e.sonic.instashieldTimer > 0 then
+            switch.selectedCase = 4
+        else
+            switch.selectedCase = ((m.actionTimer - 1) % 4 // 2 + 1)
+        end
     elseif sSonicSpinDashActs[m.action] then
         switch.selectedCase = 3
     else
