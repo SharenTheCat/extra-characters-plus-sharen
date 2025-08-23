@@ -46,7 +46,6 @@ function geo_ball_switch(n)
     local m = geo_get_mario_state()
     local e = gCharacterStates[m.playerIndex]
 
-
     if sSonicSpinBallActs[m.action] then
         if sSonicInstashieldActs[m.action] and e.sonic.instashieldTimer > 0 then
             switch.selectedCase = 4
@@ -78,6 +77,11 @@ SONIC_MOUTH_NORMAL    = 0 --- @type SonicMouthGSCId
 SONIC_MOUTH_FROWN     = 1 --- @type SonicMouthGSCId
 SONIC_MOUTH_GRIMACING = 2 --- @type SonicMouthGSCId
 SONIC_MOUTH_HAPPY     = 3 --- @type SonicMouthGSCId
+SONIC_MOUTH_GRIN      = 4 --- @type SonicMouthGSCId
+SONIC_MOUTH_ATTACKED  = 5 --- @type SonicMouthGSCId
+SONIC_MOUTH_SHOCKED   = 6 --- @type SonicMouthGSCId
+SONIC_MOUTH_SURPRISED = 7 --- @type SonicMouthGSCId
+SONIC_MOUTH_NOEMOTE   = 8 --- @type SonicMouthGSCId
 
 local sGrimacingActs = {
     [ACT_HOLD_HEAVY_IDLE]    = true,
@@ -85,6 +89,13 @@ local sGrimacingActs = {
     [ACT_HOLD_HEAVY_WALKING] = true,
     [ACT_SHOCKED]            = true,
     [ACT_HEAVY_THROW]        = true,
+}
+
+local sEyeStates = {
+    [MARIO_EYES_LOOK_LEFT]  = true,
+    [MARIO_EYES_LOOK_RIGHT] = true,
+    [MARIO_EYES_LOOK_UP]    = true,
+    [MARIO_EYES_LOOK_DOWN]  = true,
 }
 
 --- @param n GraphNode | FnGraphNode
@@ -97,12 +108,19 @@ function geo_switch_mario_mouth(n)
     local curAnim = smlua_anim_util_get_current_animation_name(o)
     local menuAnim = character_get_animations(character_get_current_table().model)[CS_ANIM_MENU]
 
-    if m.marioBodyState.eyeState == MARIO_EYES_DEAD or m.action == ACT_PANTING or curAnim == menuAnim then
+    if m.marioBodyState.eyeState == MARIO_EYES_DEAD then
+        switch.selectedCase = SONIC_MOUTH_ATTACKED
+    elseif curAnim == menuAnim then
         switch.selectedCase = SONIC_MOUTH_FROWN
     elseif sGrimacingActs[m.action] then
         switch.selectedCase = SONIC_MOUTH_GRIMACING
+    elseif sEyeStates[m.marioBodyState.eyeState] or m.action == ACT_PANTING then
+        switch.selectedCase = SONIC_MOUTH_SURPRISED
+    elseif m.marioBodyState.eyeState == MARIO_EYES_HALF_CLOSED and m.action == ACT_START_SLEEPING then
+        switch.selectedCase = SONIC_MOUTH_SHOCKED
+        m.actionTimer = 0
     elseif m.marioBodyState.handState == MARIO_HAND_PEACE_SIGN then
-        switch.selectedCase = SONIC_MOUTH_HAPPY
+        switch.selectedCase = SONIC_MOUTH_GRIN
     else
         switch.selectedCase = SONIC_MOUTH_NORMAL
     end
@@ -124,7 +142,7 @@ function geo_switch_mario_mouth_side(n)
     local curAnim = smlua_anim_util_get_current_animation_name(o)
     local menuAnim = character_get_animations(character_get_current_table().model)[CS_ANIM_MENU]
 
-    if angle <= 4 or curAnim == menuAnim then
+    if angle <= 4 or curAnim == menuAnim or m.marioBodyState.handState == MARIO_HAND_PEACE_SIGN then
         switch.selectedCase = SONIC_MOUTH_RIGHT
     else
         switch.selectedCase = SONIC_MOUTH_LEFT

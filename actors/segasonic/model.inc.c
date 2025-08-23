@@ -82,7 +82,7 @@ Lights1 segasonic_Shoes__SHOES__lights = gdSPDefLights1(
 	0x7F, 0x0, 0x0,
 	0xFF, 0x0, 0x0, 0x28, 0x28, 0x28);
 
-Lights1 segasonic_Straps_lights = gdSPDefLights1(
+Lights1 segasonic_Straps__GLOVES__lights = gdSPDefLights1(
 	0x7F, 0x7F, 0x7F,
 	0xFF, 0xFF, 0xFF, 0x28, 0x28, 0x28);
 
@@ -90,9 +90,9 @@ Lights1 segasonic_Soles__SHOES__lights = gdSPDefLights1(
 	0x7F, 0x0, 0x0,
 	0xFF, 0x0, 0x0, 0x28, 0x28, 0x28);
 
-Lights1 segasonic_Buckles_layer2_lights = gdSPDefLights1(
-	0x7F, 0x7F, 0x7F,
-	0xFF, 0xFF, 0xFF, 0x28, 0x28, 0x28);
+Lights1 segasonic_Buckles__HAIR__layer2_lights = gdSPDefLights1(
+	0x7F, 0x7F, 0x0,
+	0xFF, 0xFF, 0x0, 0x28, 0x28, 0x28);
 
 Lights1 segasonic_SpinDash0_lights = gdSPDefLights1(
 	0x0, 0x0, 0x7F,
@@ -201,9 +201,9 @@ u8 segasonic_custom_sonic_mouth_cd_rgba16[] = {
 	#include "actors/segasonic/custom_sonic_mouth_cd.rgba16.inc.c"
 };
 
-Gfx segasonic_custom_sonic_buckle_rgba16_aligner[] = {gsSPEndDisplayList()};
-u8 segasonic_custom_sonic_buckle_rgba16[] = {
-	#include "actors/segasonic/custom_sonic_buckle.rgba16.inc.c"
+Gfx segasonic_redhue_rgba16_aligner[] = {gsSPEndDisplayList()};
+u8 segasonic_redhue_rgba16[] = {
+	#include "actors/segasonic/redhue.rgba16.inc.c"
 };
 
 Gfx segasonic_mario_wing_tip_rgba16_aligner[] = {gsSPEndDisplayList()};
@@ -10523,8 +10523,8 @@ Gfx mat_revert_segasonic_Shoes__SHOES_[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_segasonic_Straps[] = {
-	gsSPSetLights1(segasonic_Straps_lights),
+Gfx mat_segasonic_Straps__GLOVES_[] = {
+	gsSPCopyLightsPlayerPart(GLOVES),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -10532,7 +10532,7 @@ Gfx mat_segasonic_Straps[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_revert_segasonic_Straps[] = {
+Gfx mat_revert_segasonic_Straps__GLOVES_[] = {
 	gsDPPipeSync(),
 	gsDPSetAlphaDither(G_AD_DISABLE),
 	gsSPEndDisplayList(),
@@ -10554,14 +10554,14 @@ Gfx mat_revert_segasonic_Soles__SHOES_[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_segasonic_Buckles_layer2[] = {
-	gsSPSetLights1(segasonic_Buckles_layer2_lights),
+Gfx mat_segasonic_Buckles__HAIR__layer2[] = {
+	gsSPCopyLightsPlayerPart(HAIR),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, SHADE, 0, TEXEL0, 0, ENVIRONMENT, 0),
 	gsDPSetAlphaDither(G_AD_NOISE),
 	gsDPSetRenderMode(G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, segasonic_custom_sonic_buckle_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, segasonic_redhue_rgba16),
 	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 2047, 128),
 	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 6, 0),
@@ -10569,7 +10569,7 @@ Gfx mat_segasonic_Buckles_layer2[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_revert_segasonic_Buckles_layer2[] = {
+Gfx mat_revert_segasonic_Buckles__HAIR__layer2[] = {
 	gsDPPipeSync(),
 	gsDPSetAlphaDither(G_AD_DISABLE),
 	gsDPSetRenderMode(G_RM_AA_ZB_OPA_DECAL, G_RM_AA_ZB_OPA_DECAL2),
@@ -11589,9 +11589,9 @@ Gfx segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_1[] = {
 	gsSPDisplayList(mat_segasonic_Shoes__SHOES_),
 	gsSPDisplayList(segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_1_tri_1),
 	gsSPDisplayList(mat_revert_segasonic_Shoes__SHOES_),
-	gsSPDisplayList(mat_segasonic_Straps),
+	gsSPDisplayList(mat_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_1_tri_2),
-	gsSPDisplayList(mat_revert_segasonic_Straps),
+	gsSPDisplayList(mat_revert_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(mat_segasonic_Soles__SHOES_),
 	gsSPDisplayList(segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_1_tri_3),
 	gsSPDisplayList(mat_revert_segasonic_Soles__SHOES_),
@@ -11609,9 +11609,9 @@ Gfx segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_1_mat_overr
 };
 
 Gfx segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_2[] = {
-	gsSPDisplayList(mat_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_segasonic_Buckles__HAIR__layer2),
 	gsSPDisplayList(segasonic_Right_Hand_Cap_Switch_Option_Right_Hand_Cap_mesh_layer_2_tri_0),
-	gsSPDisplayList(mat_revert_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_revert_segasonic_Buckles__HAIR__layer2),
 	gsSPEndDisplayList(),
 };
 
@@ -11629,9 +11629,9 @@ Gfx segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_1
 	gsSPDisplayList(mat_segasonic_Shoes__SHOES_),
 	gsSPDisplayList(segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_1_tri_1),
 	gsSPDisplayList(mat_revert_segasonic_Shoes__SHOES_),
-	gsSPDisplayList(mat_segasonic_Straps),
+	gsSPDisplayList(mat_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_1_tri_2),
-	gsSPDisplayList(mat_revert_segasonic_Straps),
+	gsSPDisplayList(mat_revert_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(mat_segasonic_Soles__SHOES_),
 	gsSPDisplayList(segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_1_tri_3),
 	gsSPDisplayList(mat_revert_segasonic_Soles__SHOES_),
@@ -11669,9 +11669,9 @@ Gfx segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_4
 };
 
 Gfx segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_2[] = {
-	gsSPDisplayList(mat_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_segasonic_Buckles__HAIR__layer2),
 	gsSPDisplayList(segasonic_Right_Hand_Wing_Cap_Switch_Option_Right_Hand_Wing_Cap_mesh_layer_2_tri_0),
-	gsSPDisplayList(mat_revert_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_revert_segasonic_Buckles__HAIR__layer2),
 	gsSPEndDisplayList(),
 };
 
@@ -11733,9 +11733,9 @@ Gfx segasonic_Left_Leg_mesh_layer_1_mat_override_Metal__CAP__0[] = {
 };
 
 Gfx segasonic_Left_Shoe_DL_mesh_layer_1[] = {
-	gsSPDisplayList(mat_segasonic_Straps),
+	gsSPDisplayList(mat_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(segasonic_Left_Shoe_DL_mesh_layer_1_tri_0),
-	gsSPDisplayList(mat_revert_segasonic_Straps),
+	gsSPDisplayList(mat_revert_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(mat_segasonic_Shoes__SHOES_),
 	gsSPDisplayList(segasonic_Left_Shoe_DL_mesh_layer_1_tri_1),
 	gsSPDisplayList(mat_revert_segasonic_Shoes__SHOES_),
@@ -11755,9 +11755,9 @@ Gfx segasonic_Left_Shoe_DL_mesh_layer_1_mat_override_Metal__CAP__0[] = {
 };
 
 Gfx segasonic_Left_Shoe_DL_mesh_layer_2[] = {
-	gsSPDisplayList(mat_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_segasonic_Buckles__HAIR__layer2),
 	gsSPDisplayList(segasonic_Left_Shoe_DL_mesh_layer_2_tri_0),
-	gsSPDisplayList(mat_revert_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_revert_segasonic_Buckles__HAIR__layer2),
 	gsSPEndDisplayList(),
 };
 
@@ -11856,9 +11856,9 @@ Gfx segasonic_Right_Shoe_DL_mesh_layer_1[] = {
 	gsSPDisplayList(mat_segasonic_Shoes__SHOES_),
 	gsSPDisplayList(segasonic_Right_Shoe_DL_mesh_layer_1_tri_0),
 	gsSPDisplayList(mat_revert_segasonic_Shoes__SHOES_),
-	gsSPDisplayList(mat_segasonic_Straps),
+	gsSPDisplayList(mat_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(segasonic_Right_Shoe_DL_mesh_layer_1_tri_1),
-	gsSPDisplayList(mat_revert_segasonic_Straps),
+	gsSPDisplayList(mat_revert_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(mat_segasonic_Soles__SHOES_),
 	gsSPDisplayList(segasonic_Right_Shoe_DL_mesh_layer_1_tri_2),
 	gsSPDisplayList(mat_revert_segasonic_Soles__SHOES_),
@@ -11875,9 +11875,9 @@ Gfx segasonic_Right_Shoe_DL_mesh_layer_1_mat_override_Metal__CAP__0[] = {
 };
 
 Gfx segasonic_Right_Shoe_DL_mesh_layer_2[] = {
-	gsSPDisplayList(mat_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_segasonic_Buckles__HAIR__layer2),
 	gsSPDisplayList(segasonic_Right_Shoe_DL_mesh_layer_2_tri_0),
-	gsSPDisplayList(mat_revert_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_revert_segasonic_Buckles__HAIR__layer2),
 	gsSPEndDisplayList(),
 };
 
@@ -11947,9 +11947,9 @@ Gfx segasonic_Switch_Option_Spin_mesh_layer_1[] = {
 	gsSPDisplayList(mat_segasonic_Nose),
 	gsSPDisplayList(segasonic_Switch_Option_Spin_mesh_layer_1_tri_7),
 	gsSPDisplayList(mat_revert_segasonic_Nose),
-	gsSPDisplayList(mat_segasonic_Straps),
+	gsSPDisplayList(mat_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(segasonic_Switch_Option_Spin_mesh_layer_1_tri_8),
-	gsSPDisplayList(mat_revert_segasonic_Straps),
+	gsSPDisplayList(mat_revert_segasonic_Straps__GLOVES_),
 	gsSPDisplayList(mat_segasonic_Shoes__SHOES_),
 	gsSPDisplayList(segasonic_Switch_Option_Spin_mesh_layer_1_tri_9),
 	gsSPDisplayList(mat_revert_segasonic_Shoes__SHOES_),
@@ -11977,9 +11977,9 @@ Gfx segasonic_Switch_Option_Spin_mesh_layer_1_mat_override_Metal__CAP__0[] = {
 };
 
 Gfx segasonic_Switch_Option_Spin_mesh_layer_2[] = {
-	gsSPDisplayList(mat_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_segasonic_Buckles__HAIR__layer2),
 	gsSPDisplayList(segasonic_Switch_Option_Spin_mesh_layer_2_tri_0),
-	gsSPDisplayList(mat_revert_segasonic_Buckles_layer2),
+	gsSPDisplayList(mat_revert_segasonic_Buckles__HAIR__layer2),
 	gsSPEndDisplayList(),
 };
 

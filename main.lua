@@ -1162,11 +1162,11 @@ extraCharacters = {
             -- metalWing = smlua_model_util_get_id("sonic_metal_wing_cap_geo")
         },
         palette = {
-            [PANTS]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- Unused
+            [PANTS]  = { r = 0xff, g = 0xff, b = 0x00 }, -- FFFF00
             [SHIRT]  = { r = 0xfe, g = 0xc1, b = 0x79 }, -- FEC179
             [GLOVES] = { r = 0xff, g = 0xff, b = 0xff }, -- FFFFFF
             [SHOES]  = { r = 0xff, g = 0x00, b = 0x00 }, -- FF0000
-            [HAIR]   = { r = 0xFF, g = 0x81, b = 0x45 }, -- Unused
+            [HAIR]   = { r = 0xff, g = 0xff, b = 0x00 }, -- FFFF00
             [SKIN]   = { r = 0xfe, g = 0xc1, b = 0x79 }, -- FEC179
             [CAP]    = { r = 0x00, g = 0x00, b = 0xff }, -- 0000FF
             [EMBLEM] = { r = 0x00, g = 0x00, b = 0xff }, -- 0000FF
@@ -1233,9 +1233,6 @@ extraCharacters = {
                 [CHAR_ANIM_PUT_CAP_ON] = 'sonic_putting_on_hat',
                 [CS_ANIM_MENU] = 'cs_sonic',
             }
-        },
-        eyes = {
-            [CS_ANIM_MENU] = MARIO_EYES_LOOK_RIGHT
         },
     },
 }
