@@ -381,7 +381,7 @@ function bhv_birdo_egg_loop(o)
                 local o2 = obj_get_first(list)
                 while o2 and o.numCollidedObjs < 4 do
                     if o ~= o2 then
-                        if list ~= OBJ_LIST_PLAYER and detect_object_hitbox_overlap(o, o2) ~= 0 then
+                        if list ~= OBJ_LIST_PLAYER and o2.oHeldState == HELD_FREE and detect_object_hitbox_overlap(o, o2) ~= 0 then
                             o2.numCollidedObjs = o2.numCollidedObjs - 1 -- prevent game crash
                             local doEggInteract = birdo_egg_interaction(o2, o)
                             if o.oBehParams == 0 or doEggInteract then
@@ -579,7 +579,7 @@ function birdo_update(m)
         local yaw = m.faceAngle.y
         local pitch = 0
         if canShoot then
-            -- when swimming, flying, or in first person, allow shooting in any direction (UNUSED)
+            -- when swimming, flying, or in first person, allow shooting in any direction
             if m.action == ACT_FIRST_PERSON then
                 yaw = m.statusForCamera.headRotation.y + yaw
                 pitch = m.statusForCamera.headRotation.x
@@ -728,7 +728,7 @@ end
 function birdo_on_interact(m, o, intType)
     local e = gCharacterStates[m.playerIndex]
     if intType == INTERACT_GRABBABLE and e.birdo.framesSinceShoot == 0 and e.birdo.flameCharge == 0 and (m.action == ACT_SPIT_EGG or m.action == ACT_SPIT_EGG_WALK) and o.oInteractionSubtype & INT_SUBTYPE_NOT_GRABBABLE == 0 then
-        set_mario_action(m.action, ACT_MOVE_PUNCHING, 1)
+        set_mario_action(m, ACT_MOVE_PUNCHING, 1)
         return
     end
 end
@@ -785,8 +785,9 @@ function birdo_egg_interaction(o, egg)
     end
 
     if o.oInteractType == INTERACT_BULLY then
+        o.oBullyLastNetworkPlayerIndex = egg.globalPlayerIndex
         o.oForwardVel = (egg.oBehParams ~= 0 and 50) or 25
-        o.oMoveAngleYaw = obj_angle_to_object(o, egg) + 0x8000
+        o.oMoveAngleYaw = egg.oMoveAngleYaw
         return true
     end
 end

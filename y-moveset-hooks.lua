@@ -77,6 +77,9 @@ local function on_character_select_load()
     character_hook_moveset(CT_BIRDO, HOOK_ON_INTERACT, birdo_on_interact)
     character_hook_moveset(CT_BIRDO, HOOK_BEFORE_PHYS_STEP, birdo_before_phys_step)
     character_hook_moveset(CT_BIRDO, HOOK_BEFORE_MARIO_UPDATE, birdo_before_update)
+    -- Spike
+    character_hook_moveset(CT_FOREMANSPIKE, HOOK_MARIO_UPDATE, spike_update)
+    character_hook_moveset(CT_FOREMANSPIKE, HOOK_BEFORE_SET_MARIO_ACTION, spike_before_action)
     -- Pauline
     if not OmmEnabled then
         hook_event(HOOK_ON_SET_MARIO_ACTION, pauline_init_action) -- Must run for every character
