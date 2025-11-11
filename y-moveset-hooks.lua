@@ -96,6 +96,8 @@ local function on_character_select_load()
     character_hook_moveset(CT_WAPEACH, HOOK_BEFORE_SET_MARIO_ACTION, wapeach_before_action)
     -- Donkey Kong
     character_hook_moveset(CT_DONKEY_KONG, HOOK_BEFORE_PHYS_STEP, before_donkey_kong_phys_step)
+    character_hook_moveset(CT_DONKEY_KONG, HOOK_BEFORE_SET_MARIO_ACTION, donkey_kong_before_action)
+    character_hook_moveset(CT_DONKEY_KONG, HOOK_ON_INTERACT, donkey_kong_on_interact)
     -- Sonic
     character_hook_moveset(CT_SONIC, HOOK_BEFORE_SET_MARIO_ACTION, before_set_sonic_action)
     character_hook_moveset(CT_SONIC, HOOK_ON_SET_MARIO_ACTION, on_set_sonic_action)
