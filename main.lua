@@ -1469,7 +1469,3 @@ end
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
 hook_event(HOOK_CHARACTER_SOUND, on_character_sound)
 hook_event(HOOK_MARIO_UPDATE, mario_update)
--- Delete this after testing.
-hook_event(HOOK_MARIO_UPDATE, function (m)
-    m.flags = m.flags & ~MARIO_CAP_ON_HEAD
-end)

@@ -322,7 +322,7 @@ local function act_donkey_kong_pound(m)
     end
 
     m.actionTimer = m.actionTimer + 1
-    if m.actionTimer == 4 then
+    if m.actionTimer == 1 then
         play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_HEAVY_LANDING)
         set_mario_particle_flags(m, (PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR), 0)
         m.action = ACT_DONKEY_KONG_POUND_HIT
@@ -333,7 +333,6 @@ local function act_donkey_kong_pound(m)
             -- pound again
             m.actionTimer = 0
             m.actionState = 0
-            set_anim_to_frame(m, 0)
         elseif m.input & INPUT_Z_DOWN ~= 0 then
             set_mario_action(m, ACT_START_CROUCHING, 0)
         else
@@ -341,7 +340,17 @@ local function act_donkey_kong_pound(m)
         end
     end
 
-    set_character_anim_with_accel(m, CHAR_ANIM_PLACE_LIGHT_OBJ, 0x20000)
+    --set_character_anim_with_accel(m, CHAR_ANIM_PLACE_LIGHT_OBJ, 0x20000)
+    -- 28 anim frames in 16 frames
+    if m.marioObj.header.gfx.animInfo.animFrame > 15 and m.actionTimer == 0 then
+        --djui_chat_message_create(tostring(m.marioObj.header.gfx.animInfo.animFrame))
+        set_anim_to_frame(m, 0)
+    end
+    play_custom_anim(m, "donkey_ground_slap", 0x10000 * 28 // 16)
+    --[[set_anim_to_frame(m, m.marioObj.header.gfx.animInfo.animFrame)
+    if m.controller.buttonPressed & L_TRIG ~= 0 then
+        set_anim_to_frame(m, m.marioObj.header.gfx.animInfo.animFrame + 1)
+    end]]
     local result = perform_ground_step(m)
     if result == GROUND_STEP_LEFT_GROUND then
         return set_mario_action(m, ACT_FREEFALL, 0)
