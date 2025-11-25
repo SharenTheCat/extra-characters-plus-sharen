@@ -993,7 +993,7 @@ extraCharacters = {
         model = smlua_model_util_get_id("rosalina_geo"),
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-rosalina"),
-        camScale = 1.1,
+        camScale = 1.2,
         offset = 0,
         meter = {
             label = {
@@ -1153,6 +1153,13 @@ extraCharacters = {
             [CHAR_ANIM_HOLDING_BOWSER] = 'princess_holding_bowser',
             [CHAR_ANIM_GRAB_BOWSER] = 'princess_grab_bowser',
             [CHAR_ANIM_BEND_KNESS_RIDING_SHELL] = 'rosalina_spinjump',
+            [CS_ANIM_MENU] = "cs_rosalina",
+        },
+        eyes = {
+            [CS_ANIM_MENU] = MARIO_EYES_OPEN,
+        },
+        hands = {
+            [CS_ANIM_MENU] = MARIO_HAND_PEACE_SIGN,
         }
     },
     -------------
@@ -1192,7 +1199,7 @@ extraCharacters = {
         },
         palettes = {
             {
-                name = "Default",
+                name = "Apricot",
                 [PANTS]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
                 [SHIRT]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
                 [GLOVES] = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
@@ -1201,6 +1208,28 @@ extraCharacters = {
                 [SKIN]   = { r = 0xBF, g = 0x94, b = 0x68 }, -- BF9468
                 [CAP]    = { r = 0xEF, g = 0xCA, b = 0x11 }, -- EFCA11
                 [EMBLEM] = { r = 0xFF, g = 0x00, b = 0x00 }  -- FF0000
+            },
+                        {
+                name = "Preach",
+                [PANTS]  = { r = 0x15, g = 0x15, b = 0x10 }, -- 151010
+                [SHIRT]  = { r = 0x15, g = 0x15, b = 0x10 }, -- 151010
+                [GLOVES] = { r = 0x15, g = 0x15, b = 0x10 }, -- 151010
+                [SHOES]  = { r = 0x15, g = 0x15, b = 0x10 }, -- 151010
+                [HAIR]   = { r = 0xFE, g = 0xC4, b = 0x31 }, -- FEC431
+                [SKIN]   = { r = 0xBF, g = 0x94, b = 0x68 }, -- BF9468
+                [CAP]    = { r = 0xFF, g = 0xC8, b = 0x36 }, -- FFC836
+                [EMBLEM] = { r = 0xFF, g = 0x25, b = 0x8C }  -- FF258C
+            },
+                        {
+                name = "Scene",
+                [PANTS]  = { r = 0xFF, g = 0x00, b = 0x9E }, -- FF009E
+                [SHIRT]  = { r = 0xFF, g = 0x00, b = 0x77 }, -- FF0077
+                [GLOVES] = { r = 0xFF, g = 0x00, b = 0x5D }, -- FF005D
+                [SHOES]  = { r = 0x37, g = 0x2B, b = 0x2C }, -- 372B2C
+                [HAIR]   = { r = 0x00, g = 0xBE, b = 0x00 }, -- 00BE00
+                [SKIN]   = { r = 0xBF, g = 0x94, b = 0x68 }, -- BF9468
+                [CAP]    = { r = 0xFF, g = 0x55, b = 0x81 }, -- FF5581
+                [EMBLEM] = { r = 0xFF, g = 0xFF, b = 0xFF }  -- FFFFFF
             }
         },
         voices = {
@@ -1569,7 +1598,7 @@ local function on_character_select_load()
             end
         end
         character_set_category(tablePos, "CoopDX")
-        if i ~= 11 and anims then character_add_animations(model, anims, eyes) end
+        if i ~= 11 and anims then character_add_animations(model, anims, eyes, hands) end
         if meter then character_add_health_meter(tablePos, meter) end
     end
 
@@ -1636,7 +1665,7 @@ local function mario_update(m)
             anims = animsets.normal
         end
 
-        if anims then character_add_animations(model, anims, eyes) end
+        if anims then character_add_animations(model, anims, eyes, hands) end
 
     end
     for _, char in pairs(extraCharacters) do
