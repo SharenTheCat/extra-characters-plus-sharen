@@ -1524,6 +1524,39 @@ extraCharacters = {
                 [SKIN]   = { r = 0xfe, g = 0xc1, b = 0x79 }, -- fec179
                 [CAP]    = { r = 0x83, g = 0x1e, b = 0x14 }, -- 831E14
                 [EMBLEM] = { r = 0xFF, g = 0xe9, b = 0x00 }  -- FFE900
+            },
+            {
+                name     = "Gorilla",
+                [PANTS]  = { r = 0xee, g = 0xc5, b = 0x2b }, -- eec52b
+                [SHIRT]  = { r = 0x1b, g = 0x1b, b = 0x1b }, -- 1b1b1b
+                [GLOVES] = { r = 0xae, g = 0x79, b = 0x4f }, -- ae794f
+                [SHOES]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- Unused
+                [HAIR]   = { r = 0x1b, g = 0x1b, b = 0x1b }, -- 1b1b1b
+                [SKIN]   = { r = 0xae, g = 0x79, b = 0x4f }, -- ae794f
+                [CAP]    = { r = 0x1b, g = 0x1b, b = 0x1b }, -- 1b1b1b
+                [EMBLEM] = { r = 0x2d, g = 0x5b, b = 0x2d }  -- 2d5b2d
+            },
+            {
+                name     = "Yeti",
+                [PANTS]  = { r = 0xff, g = 0x00, b = 0x00 }, -- FF0000
+                [SHIRT]  = { r = 0xff, g = 0xff, b = 0xff }, -- ffffff
+                [GLOVES] = { r = 0xfe, g = 0xc1, b = 0x79 }, -- fec179
+                [SHOES]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- Unused
+                [HAIR]   = { r = 0xff, g = 0xff, b = 0xff }, -- ffffff
+                [SKIN]   = { r = 0xfe, g = 0xc1, b = 0x79 }, -- fec179
+                [CAP]    = { r = 0xff, g = 0xff, b = 0xff }, -- ffffff
+                [EMBLEM] = { r = 0xFF, g = 0xe9, b = 0x00 }  -- FFE900
+            },
+            {
+                name     = "Retro",
+                [PANTS]  = { r = 0xee, g = 0x75, b = 0x11 }, -- ee7511
+                [SHIRT]  = { r = 0xab, g = 0x05, b = 0x07 }, -- ab0507
+                [GLOVES] = { r = 0xf5, g = 0xbb, b = 0x9f }, -- f5bb9f
+                [SHOES]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- Unused
+                [HAIR]   = { r = 0xab, g = 0x05, b = 0x07 }, -- ab0507
+                [SKIN]   = { r = 0xf5, g = 0xbb, b = 0x9f }, -- f5bb9f
+                [CAP]    = { r = 0xab, g = 0x05, b = 0x07 }, -- ab0507
+                [EMBLEM] = { r = 0xf5, g = 0xbb, b = 0x9f }, -- f5bb9f
             }
         },
         voices = {
