@@ -1689,6 +1689,8 @@ extraCharacters = {
             [CHAR_ANIM_TIPTOE] = 'donkey_92_tiptoe',
             [CHAR_ANIM_UNLOCK_DOOR] = 'donkey_61_unlock_door',
             [CHAR_ANIM_STOP_SLIDE] = 'donkey_8F_stop_slide',
+            [CHAR_ANIM_FIRST_PUNCH_FAST] = 'donkey_69_first_punch_fast',
+            [CHAR_ANIM_SECOND_PUNCH_FAST] = 'donkey_6A_second_punch_fast',
 
             [CS_ANIM_MENU] = 'cs_donkey',
         },
