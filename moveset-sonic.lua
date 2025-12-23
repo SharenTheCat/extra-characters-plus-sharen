@@ -312,8 +312,8 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
                     m.actionTimer = 2
                 else
                     if m.forwardVel > runCap then
-                        play_step_sound(m, 11, 22)
-                        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING_UNUSED, m.forwardVel/8 * 0x8000)
+                        play_step_sound(m, 14, 29)
+                        play_custom_anim(m, CUSTOM_CHAR_ANIM_SONIC_RUN, m.forwardVel/8 * 0x8000)
                     elseif m.forwardVel > jogCap then
                         play_step_sound(m, 14, 29)
                         play_custom_anim(m, CUSTOM_CHAR_ANIM_SONIC_RUN, m.forwardVel/8 * 0x8000)
