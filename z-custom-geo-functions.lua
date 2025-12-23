@@ -112,11 +112,9 @@ function geo_switch_mario_mouth(n)
 
     if m.marioBodyState.eyeState == MARIO_EYES_DEAD then
         switch.selectedCase = SONIC_MOUTH_ATTACKED
-    elseif curAnim == menuAnim then
-        switch.selectedCase = SONIC_MOUTH_FROWN
     elseif sGrimacingActs[m.action] then
         switch.selectedCase = SONIC_MOUTH_GRIMACING
-    elseif sSurprisedEyeStates[m.marioBodyState.eyeState] or m.action == ACT_PANTING then
+    elseif m.action == ACT_PANTING then
         switch.selectedCase = SONIC_MOUTH_SURPRISED
     elseif m.marioBodyState.eyeState == MARIO_EYES_HALF_CLOSED and m.action == ACT_START_SLEEPING then
         switch.selectedCase = SONIC_MOUTH_SHOCKED
@@ -144,7 +142,7 @@ function geo_switch_mario_mouth_side(n)
     local curAnim = smlua_anim_util_get_current_animation_name(o)
     local menuAnim = character_get_animations(character_get_current_table().model)[CS_ANIM_MENU]
 
-    if angle <= 4 or curAnim == menuAnim or m.marioBodyState.handState == MARIO_HAND_PEACE_SIGN then
+    if angle <= 4 or m.marioBodyState.handState == MARIO_HAND_PEACE_SIGN then
         switch.selectedCase = SONIC_MOUTH_RIGHT
     else
         switch.selectedCase = SONIC_MOUTH_LEFT

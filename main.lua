@@ -583,7 +583,7 @@ extraCharacters = {
         model = smlua_model_util_get_id("yoshi_player_geo"),
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-yoshi"),
-        camScale = 1,
+        camScale = 1.1,
         offset = 0,
         meter = {
             label = {
@@ -714,7 +714,7 @@ extraCharacters = {
         model = smlua_model_util_get_id("birdo_geo"),
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-birdo"),
-        camScale = 1,
+        camScale = 1.1,
         offset = 0,
         meter = {
             label = {
@@ -848,7 +848,7 @@ extraCharacters = {
         model = smlua_model_util_get_id("foreman_spike_geo"),
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-spike"),
-        camScale = 1,
+        camScale = 1.1,
         offset = 0,
         meter = {
             label = {
@@ -966,7 +966,7 @@ extraCharacters = {
         model = smlua_model_util_get_id("pauline_geo"),
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-pauline"),
-        camScale = 1,
+        camScale = 1.1,
         offset = 0,
         meter = {
             label = {
@@ -1708,7 +1708,7 @@ extraCharacters = {
         model = smlua_model_util_get_id("segasonic_geo"),
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-segasonic"),
-        camScale = 1,
+        camScale = 0.9,
         offset = 0,
         meter = {
             label = {
@@ -1842,7 +1842,7 @@ extraCharacters = {
             }
         },
         eyes = {
-            [CS_ANIM_MENU] = MARIO_EYES_LOOK_RIGHT
+            [CS_ANIM_MENU] = MARIO_EYES_LOOK_LEFT
         },
     },
 }
