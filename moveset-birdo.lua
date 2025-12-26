@@ -215,9 +215,18 @@ local function act_spit_egg_walk(m)
 
         mBody.allowPartRotation = true
         m.marioObj.header.gfx.angle.y = m.intendedYaw
+        local marioAnimInfo = m.marioObj.header.gfx.animInfo
         if math.abs(dYaw) > 0x4000 then
             m.marioObj.header.gfx.angle.y = m.intendedYaw - 0x8000
-            m.marioObj.header.gfx.animInfo.animAccel = -math.abs(m.marioObj.header.gfx.animInfo.animAccel)
+            marioAnimInfo.animAccel = -math.abs(marioAnimInfo.animAccel)
+        else
+            marioAnimInfo.animAccel = math.abs(marioAnimInfo.animAccel)
+        end
+
+        -- Handle manually the loop points of the animation if moving backwards
+        if marioAnimInfo.animAccel < 0 and marioAnimInfo.animFrame <= marioAnimInfo.curAnim.loopStart then
+            marioAnimInfo.animFrame = marioAnimInfo.curAnim.loopEnd
+            marioAnimInfo.animFrameAccelAssist = marioAnimInfo.animFrame << 16
         end
 
         mBody.torsoAngle.y = math.s16(m.faceAngle.y - m.marioObj.header.gfx.angle.y) * 0.4
