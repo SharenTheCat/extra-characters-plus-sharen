@@ -1309,11 +1309,15 @@ function sonic_ring_health(m, e)
     timeBetweenDamages = timeBetweenDamages - 1
 end
 
-function sonic_on_death(m)
+function sonic_value_refresh(m)
     local e = gCharacterStates[m.playerIndex]
     e.sonic.oxygenTimer = 30
     e.sonic.oxygen = 30
     rings = 0
+end
+
+function sonic_on_level_init()
+    sonic_value_refresh(gMarioStates[0])
 end
 
 local bounceTypes = {
@@ -1384,11 +1388,6 @@ function sonic_on_interact(m, o, intType)
         if m.action == ACT_HOMING_ATTACK then
             set_mario_action(m, ACT_AIR_SPIN, 0)
         end
-    end
-
-	if intType == INTERACT_COIN then
-		rings = rings + o.oDamageOrCoinValue
-		--m.healCounter = 0
     end
 end
 
@@ -1593,6 +1592,11 @@ local prevHudPos = gVec3fZero()
 local hudPos = gVec3fZero()
 local prevTarget
 
+function sonic_hud_stuff()
+    sonic_homing_hud()
+    sonic_ring_display()
+end
+
 function sonic_homing_hud()
     djui_hud_set_resolution(RESOLUTION_N64)
     local color = network_player_get_palette_color(gNetworkPlayers[0], CAP)
@@ -1741,6 +1745,11 @@ function ringteract(m, o, intType) -- This is the ring interaction for ALL chara
     if obj_has_behavior_id(o, id_bhvSonicRing) ~= 0 then
         m.healCounter = 4
         rings = rings + 1
+    end
+
+	if intType == INTERACT_COIN then
+		rings = rings + o.oDamageOrCoinValue
+		--m.healCounter = 0
     end
 end
 

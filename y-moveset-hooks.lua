@@ -106,9 +106,9 @@ local function on_character_select_load()
     character_hook_moveset(CT_SONIC, HOOK_ALLOW_FORCE_WATER_ACTION, function () return false end)
     character_hook_moveset(CT_SONIC, HOOK_MARIO_UPDATE, sonic_update)
     character_hook_moveset(CT_SONIC, HOOK_BEFORE_PHYS_STEP, sonic_before_phys_step)
-    character_hook_moveset(CT_SONIC, HOOK_ON_HUD_RENDER_BEHIND, sonic_homing_hud)
-    character_hook_moveset(CT_SONIC, HOOK_ON_HUD_RENDER_BEHIND, sonic_ring_display)
-    character_hook_moveset(CT_SONIC, HOOK_ON_DEATH, sonic_on_death)
+    character_hook_moveset(CT_SONIC, HOOK_ON_HUD_RENDER_BEHIND, sonic_hud_stuff)
+    character_hook_moveset(CT_SONIC, HOOK_ON_DEATH, sonic_value_refresh)
+    character_hook_moveset(CT_SONIC, HOOK_ON_LEVEL_INIT, sonic_on_level_init)
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
