@@ -107,9 +107,6 @@ function geo_switch_mario_mouth(n)
     local m = geo_get_mario_state()
     local o = geo_get_current_object()
 
-    local curAnim = smlua_anim_util_get_current_animation_name(o)
-    local menuAnim = character_get_animations(character_get_current_table().model)[CS_ANIM_MENU]
-
     if m.marioBodyState.eyeState == MARIO_EYES_DEAD then
         switch.selectedCase = SONIC_MOUTH_ATTACKED
     elseif sGrimacingActs[m.action] then
@@ -138,9 +135,6 @@ function geo_switch_mario_mouth_side(n)
     local m = geo_get_mario_state()
     local o = geo_get_current_object()
     local angle = mario_yaw_from_camera(m)
-
-    local curAnim = smlua_anim_util_get_current_animation_name(o)
-    local menuAnim = character_get_animations(character_get_current_table().model)[CS_ANIM_MENU]
 
     if angle <= 4 or m.marioBodyState.handState == MARIO_HAND_PEACE_SIGN then
         switch.selectedCase = SONIC_MOUTH_RIGHT
