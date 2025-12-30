@@ -1120,9 +1120,13 @@ function on_set_sonic_action(m)
     end
 end
 
+local powerTimer = 0
+
 --- @param m MarioState
 function sonic_update(m)
     local e = gCharacterStates[m.playerIndex]
+
+    powerTimer = 0
     
     local groundMovingActions = {
         [ACT_SONIC_RUNNING] = 1,
@@ -1207,6 +1211,17 @@ function sonic_update(m)
     sonic_ring_health(m, e)
     
     e.sonic.instashieldTimer = e.sonic.instashieldTimer - 1
+end
+
+function sonic_things_for_non_sonic_chars(m)
+    -- Clear rings even when you're not Sonic.
+    if m.hurtCounter > 0 then
+        rings = 0
+    end
+
+    -- Reenable the vanilla power meter when the moveset is off.
+    if powerTimer == 18 then hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) | HUD_DISPLAY_FLAG_POWER) end
+    powerTimer = powerTimer + 1
 end
 
 function sonic_drowning(m, e)
@@ -1672,19 +1687,6 @@ function sonic_ring_display()
     local x = (djui_hud_get_screen_width() / 2 - 20) - (djui_hud_measure_text(varRings) * 0.5) / 2 - 1
     local x2 = djui_hud_get_screen_width() / 2 - 52
 
-    if RingMeterHUD.animation ~= RING_METER_HIDDEN then
-        djui_hud_render_texture_interpolated(TEX_SONIC_RING_METER, x2, RingMeterHUD.prevY - 25, 1, 1, x2, RingMeterHUD.y - 25, 1, 1)
-
-        if math.floor(flashTimer / 15) == 1 then
-            djui_hud_set_color(255, 0, 0, 255)
-        else
-            djui_hud_set_color(255, 255, 0, 255)
-        end
-        djui_hud_print_text_interpolated(varRings, x, RingMeterHUD.prevY, 0.5, x, RingMeterHUD.y, 0.5)
-    else
-        RingMeterHUD.y = 68
-    end
-
     if RingMeterHUD.animation ==  RING_METER_EMPHASIZING then
         sonic_ring_display_emphasizing(RingMeterHUD)
     elseif RingMeterHUD.animation ==  RING_METER_DEEMPHASIZING then
@@ -1700,7 +1702,21 @@ function sonic_ring_display()
         RingMeterHUD.animation = RING_METER_EMPHASIZING
     end
 
+    if RingMeterHUD.animation ~= RING_METER_HIDDEN then
+        djui_hud_render_texture_interpolated(TEX_SONIC_RING_METER, x2, RingMeterHUD.prevY - 25, 1, 1, x2, RingMeterHUD.y - 25, 1, 1)
+
+        if math.floor(flashTimer / 15) == 1 then
+            djui_hud_set_color(255, 0, 0, 255)
+        else
+            djui_hud_set_color(255, 255, 0, 255)
+        end
+        djui_hud_print_text_interpolated(varRings, x, RingMeterHUD.prevY, 0.5, x, RingMeterHUD.y, 0.5)
+    else
+        RingMeterHUD.y = 68
+    end
     RingMeterHUD.prevY = RingMeterHUD.y
+
+    hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) & ~HUD_DISPLAY_FLAG_POWER)
 end
 
 function sonic_ring_display_emphasizing(h)
@@ -1778,6 +1794,9 @@ hook_mario_action(ACT_HOMING_ATTACK, { every_frame = act_homing_attack, gravity 
 hook_mario_action(ACT_BOUNCE_LAND, act_bounce_land, INT_GROUND_POUND_OR_TWIRL)
 
 hook_event(HOOK_MARIO_OVERRIDE_PHYS_STEP_DEFACTO_SPEED, sonic_defacto_fix)
+hook_event(HOOK_ON_DEATH, sonic_value_refresh)
+hook_event(HOOK_ON_LEVEL_INIT, sonic_on_level_init)
+hook_event(HOOK_MARIO_UPDATE, sonic_things_for_non_sonic_chars)
 
 -- Ring object.
 
