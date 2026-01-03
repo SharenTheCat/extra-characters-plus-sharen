@@ -1896,7 +1896,11 @@ local ultraBrosCredits = {
         "SlashOLantern,WaPeach",
         "Dean Seavor,Donkey Kong",
         "ReeseiMental,Sonic",
-    }
+    },
+    {
+        name = TEXT_PACK_NAME .. " Graffiti Artists",
+        "SAWhane,Sonic",
+    },
 }
 
 local function on_character_select_load()
