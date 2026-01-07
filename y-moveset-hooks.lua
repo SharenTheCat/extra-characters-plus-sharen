@@ -27,18 +27,33 @@ function character_actions_reset(m)
     end
 end
 
---- Resets the body rotations
+--- Resets the body rotations, pitch, and hitbox size on new actions
+local PITCH_AND_HITBOX_RESET_ACTIONS = {
+    [ACT_DONKEY_KONG_ROLL] = 1,
+    [ACT_DONKEY_KONG_ROLL_AIR] = 1,
+    [ACT_DONKEY_KONG_POUND] = 1,
+    [ACT_DONKEY_KONG_POUND_HIT] = 1,
+    [ACT_SPIN_JUMP] = 1,
+    [ACT_AIR_SPIN] = 1,
+    [ACT_HOMING_ATTACK] = 1,
+    [ACT_SPIN_DASH] = 1,
+}
 --- @param m MarioState
-function torso_tilt_reset(m)
+function reset_from_action(m)
     if m.marioBodyState.allowPartRotation == 1 then
         vec3s_copy(m.marioBodyState.torsoAngle, gVec3sZero())
         vec3s_copy(m.marioBodyState.headAngle, gVec3sZero())
         m.marioBodyState.allowPartRotation = false
     end
+
+    if PITCH_AND_HITBOX_RESET_ACTIONS[m.prevAction] then
+        m.faceAngle.x = 0
+        m.marioObj.hitboxRadius = 37
+    end
 end
 
 hook_event(HOOK_MARIO_UPDATE, character_actions_reset)
-hook_event(HOOK_ON_SET_MARIO_ACTION, torso_tilt_reset)
+hook_event(HOOK_ON_SET_MARIO_ACTION, reset_from_action)
 
 ------------
 --  Main  --

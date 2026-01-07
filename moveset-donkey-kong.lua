@@ -813,8 +813,10 @@ local function act_donkey_kong_pound(m)
         spawn_non_sync_object(id_bhvMistCircParticleSpawner, E_MODEL_NONE, pos.x, pos.y, pos.z, nil)
 
         m.action = ACT_DONKEY_KONG_POUND_HIT
+        m.marioObj.hitboxRadius = 100 -- larger hitbox
     elseif m.action == ACT_DONKEY_KONG_POUND_HIT then
         m.action = ACT_DONKEY_KONG_POUND
+        m.marioObj.hitboxRadius = 37 -- reset hitbox
     elseif m.actionTimer >= 8 then
         if m.actionState ~= 0 then
             -- pound again
