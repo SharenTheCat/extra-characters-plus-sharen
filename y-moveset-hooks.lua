@@ -97,7 +97,6 @@ local function on_character_select_load()
     character_hook_moveset(CT_DONKEY_KONG, HOOK_BEFORE_PHYS_STEP, donkey_kong_before_phys_step) -- Cut until ledge grabbing gets fixed
     character_hook_moveset(CT_DONKEY_KONG, HOOK_BEFORE_SET_MARIO_ACTION, donkey_kong_before_action)
     character_hook_moveset(CT_DONKEY_KONG, HOOK_ON_INTERACT, donkey_kong_on_interact)
-    character_hook_moveset(CT_DONKEY_KONG, HOOK_ON_ATTACK_OBJECT, DK_on_attack)
     -- Sonic
     character_hook_moveset(CT_SONIC, HOOK_BEFORE_SET_MARIO_ACTION, before_set_sonic_action)
     character_hook_moveset(CT_SONIC, HOOK_ON_SET_MARIO_ACTION, on_set_sonic_action)

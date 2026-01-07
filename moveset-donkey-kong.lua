@@ -103,7 +103,7 @@ function perform_donkey_kong_air_step(m, stepArg)
     -- Start climbing
     if m.wall ~= nil and m.action ~= ACT_DONKEY_CLIMB and m.prevAction ~= ACT_DONKEY_CLIMB
     and (m.action & ACT_FLAG_INVULNERABLE == 0) and stepResult ~= AIR_STEP_HIT_LAVA_WALL
-    and m.input & INPUT_A_DOWN ~= 0 then
+    and m.input & INPUT_A_DOWN ~= 0 and m.heldObj == nil then
         local wallangle = atan2s(m.wallNormal.z, m.wallNormal.x) + 0x8000
         -- Only grab wall if within certain angle of the wall
         if abs_angle_diff(wallangle, m.faceAngle.y) < 0x3000 then
@@ -297,11 +297,13 @@ local function act_donkey_kong_roll(m)
     local isSliding = (mario_floor_is_slippery(m)) ~= 0
     if isSliding then
         if update_sliding(m, 4) ~= 0 or m.actionState == 0 then
+            m.faceAngle.x = 0
             return set_mario_action(m, ACT_DECELERATING, 0)
         end
     end
 
     if mario_check_object_grab(m) ~= 0 then
+        m.faceAngle.x = 0
         set_character_animation(m, CHAR_ANIM_FIRST_PUNCH)
         set_anim_to_frame(m, 2)
         return 1
@@ -350,6 +352,7 @@ local function act_donkey_kong_roll(m)
         return set_mario_action(m, ACT_DONKEY_KONG_ROLL_AIR, 0)
     elseif result == GROUND_STEP_HIT_WALL then
         if (m.wall or gServerSettings.bouncyLevelBounds == BOUNCY_LEVEL_BOUNDS_OFF) then
+            m.faceAngle.x = 0
             set_mario_particle_flags(m, PARTICLE_VERTICAL_STAR, 0);
             slide_bonk(m, ACT_GROUND_BONK, ACT_WALKING)
             return
@@ -368,6 +371,7 @@ local function act_donkey_kong_roll(m)
 
     -- end roll
     if m.actionTimer > DONKEY_KONG_ROLL_END then
+        m.faceAngle.x = 0
         return set_mario_action(m, ACT_WALKING, 0)
     end
 
@@ -427,6 +431,7 @@ local function act_donkey_kong_roll_air(m)
     end
 
     if m.actionTimer > DONKEY_KONG_ROLL_END then
+        m.faceAngle.x = 0
         return set_mario_action(m, ACT_FREEFALL, 0)
     end
 
@@ -453,7 +458,18 @@ local function act_donkey_kong_pound(m)
     m.actionTimer = m.actionTimer + 1
     if m.actionTimer == 1 then
         play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_HEAVY_LANDING)
-        set_mario_particle_flags(m, (PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR), 0)
+
+        -- Spawn particles at hand that hit ground
+        local pos = {x = 0, y = 0, z = 0}
+        if m.marioObj.header.gfx.animInfo.animFrame >= 8 then
+            get_mario_anim_part_pos(m, MARIO_ANIM_PART_RIGHT_HAND, pos)
+        else
+            get_mario_anim_part_pos(m, MARIO_ANIM_PART_LEFT_HAND, pos)
+        end
+        pos.y = m.pos.y -- always appear on ground
+        spawn_non_sync_object(id_bhvHorStarParticleSpawner, E_MODEL_NONE, pos.x, pos.y, pos.z, nil)
+        spawn_non_sync_object(id_bhvMistCircParticleSpawner, E_MODEL_NONE, pos.x, pos.y, pos.z, nil)
+
         m.action = ACT_DONKEY_KONG_POUND_HIT
     elseif m.action == ACT_DONKEY_KONG_POUND_HIT then
         m.action = ACT_DONKEY_KONG_POUND
@@ -555,7 +571,9 @@ function act_donkey_climb(m)
     --Face directly towards wall to make sure we're latched on
     m.faceAngle.y = wallangle
     mario_set_forward_vel(m, 1)
-    if m.actionTimer <= 40 then
+    if m.actionTimer <= DONKEY_KONG_SLIP_TIME then
+        m.vel.y = 0
+    elseif m.actionTimer <= DONKEY_KONG_SLIDE_TIME then
         m.vel.y = 5
     end
 

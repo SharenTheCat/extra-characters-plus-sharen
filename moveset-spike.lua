@@ -219,7 +219,9 @@ function bhv_spike_bomb_loop(o)
     end
 
     if o.oHeldState == HELD_FREE then
-        cur_obj_enable_rendering_and_become_tangible(o)
+        cur_obj_enable_rendering()
+        -- become tangible if we were untangible, but not if timer is set
+        if o.oIntangibleTimer == -1 then o.oIntangibleTimer = 0 end
 
         local colFlags = object_step()
         local floor = nil
@@ -448,7 +450,7 @@ end
 ---@param o Object
 ---@param type integer
 ---@param value boolean
-function on_interact(m, o, type, value)
+function player_bomb_interact(m, o, type, value)
     if obj_has_behavior_id(o, id_bhvSpikeBomb) ~= 0 and type == INTERACT_DAMAGE and value then
         if m.pos.y > o.oPosY and o.oDamageOrCoinValue >= 4 and m.action & ACT_FLAG_AIR ~= 0 then
             m.invincTimer = math.max(m.invincTimer, 3)
@@ -456,6 +458,9 @@ function on_interact(m, o, type, value)
             set_mario_action(m, ACT_BOMB_JUMP, 0)
             m.vel.y = 69
             m.forwardVel = 16
+            if m.playerIndex == 0 then
+                o.oIntangibleTimer = 3 -- needed for arena
+            end
         else
             if m.action & (ACT_FLAG_AIR | ACT_FLAG_WATER_OR_TEXT | ACT_FLAG_METAL_WATER) == 0 then
                 if m.action == ACT_FORWARD_GROUND_KB or m.action == ACT_HARD_FORWARD_GROUND_KB or m.action == ACT_SOFT_FORWARD_GROUND_KB then
@@ -470,7 +475,7 @@ function on_interact(m, o, type, value)
         end
     end
 end
-hook_event(HOOK_ON_INTERACT, on_interact)
+hook_event(HOOK_ON_INTERACT, player_bomb_interact)
 
 -- handle other object interactions with spike's bomb
 ---@param o Object
