@@ -43,6 +43,10 @@ for i = 0, (MAX_PLAYERS - 1) do
     e.sonic.bounced = false
     e.sonic.spindashState = 0
     e.sonic.instashieldTimer = 0
-    e.sonic.oxygenTimer = 30
-    e.sonic.oxygen = 30
+    e.sonic.oxygen = 900 -- 30 seconds
+    e.sonic.prevVelY = 0
+    e.sonic.prevHeight = 0
+    e.sonic.physTimer = 0
+    e.sonic.lastforwardPos = gVec3fZero()
+    e.sonic.realFVel = 0
 end

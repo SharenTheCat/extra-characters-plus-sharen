@@ -47,8 +47,12 @@
 --- @field public bounced boolean
 --- @field public spindashState integer
 --- @field public instashieldTimer integer
---- @field public oxygenTimer integer
 --- @field public oxygen integer
+--- @field public prevVelY number
+--- @field public prevHeight number
+--- @field public physTimer integer
+--- @field public lastforwardPos Vec3f
+--- @field public realFVel number
 
 --- @class CharacterState
 --- @field public mario MarioState

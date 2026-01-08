@@ -4,21 +4,45 @@
 
 if not charSelect then return end
 
+-- Sonic variables for the local player only
+gPlayerSyncTable[0].rings = 0
+local sPrevRings = 0
+local sPowerTimer = 0
+local sRingTimeBetweenDamages = 0
+local sRingFlingFactor = 0
+
+-- Sonic actions
+_G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
+_G.ACT_SONIC_FALL         = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE)
+_G.ACT_AIR_SPIN           = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_FLAG_ATTACKING | ACT_GROUP_AIRBORNE)
+_G.ACT_HOMING_ATTACK      = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_FLAG_ATTACKING | ACT_GROUP_AIRBORNE)
+_G.ACT_SPIN_DASH_CHARGE   = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_GROUP_STATIONARY | ACT_FLAG_SHORT_HITBOX)
+_G.ACT_BOUNCE_LAND        = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_GROUP_STATIONARY | ACT_FLAG_SHORT_HITBOX | ACT_FLAG_ATTACKING)
+_G.ACT_SPIN_DASH          = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_MOVING | ACT_FLAG_SHORT_HITBOX | ACT_FLAG_ATTACKING)
+_G.ACT_SONIC_RUNNING      = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_MOVING)
+
+-- Sonic sounds
+local SOUND_SPIN_JUMP           = audio_sample_load("z_sfx_sonic_spinjump.ogg")
+local SOUND_SPIN_CHARGE         = audio_sample_load("z_sfx_sonic_spincharge.ogg")
+local SOUND_SPIN_RELEASE        = audio_sample_load("z_sfx_sonic_spinrelease.ogg")
+local SOUND_ROLL                = audio_sample_load("z_sfx_sonic_spinroll.ogg")
+local SOUND_SONIC_BOUNCE        = audio_sample_load("z_sfx_sonic_bounce.ogg")
+local SOUND_SONIC_HOMING        = audio_sample_load("z_sfx_sonic_homingselect.ogg")
+local SOUND_SONIC_INSTA         = audio_sample_load("z_sfx_sonic_instashield.ogg")
+local SOUND_SONIC_ELECTRIC_JUMP = audio_sample_load("z_sfx_sonic_electricjump.ogg")
+local SOUND_COUNTDOWN_CD        = audio_sample_load("z_sfx_sonic_countdown.ogg")
+
+-- Sonic textures
 local TEX_HOMING_CURSOR = get_texture_info("homing-cursor")
 local TEX_SONIC_RING_METER = get_texture_info("char-select-sonic-ring-meter")
 
-local prevVelY
-local prevHeight
+-- Sonic animations
+local CUSTOM_CHAR_ANIM_SONIC_RUN = 'sonic_running_2'
+local CUSTOM_CHAR_ANIM_SONIC_SPRING_RISE = 'sonic_spring'
+local CUSTOM_CHAR_ANIM_SONIC_SPRING_FALL = 'sonic_spring_fall'
+local CUSTOM_CHAR_ANIM_SONIC_BEFORE_GROUND_POUND = 'sonic_before_ground_pound'
 
-for i = 0, MAX_PLAYERS - 1 do
-    gPlayerSyncTable[i].rings = 0
-end
-
-local physTimer = 0
-local lastforwardPos = gVec3fZero()
-local realFVel = 0 -- Velocity calculated in realtime so that walls count.
-local l = gLakituState
-
+-- Custom Rings meter HUD
 local RingMeterHUD = {
     animation = 0,
     y = 0,
@@ -31,6 +55,8 @@ local RING_METER_EMPHASIZING = 1
 local RING_METER_DEEMPHASIZING = 2
 local RING_METER_HIDING = 3
 local RING_METER_VISIBLE = 4
+
+local l = gLakituState
 
 --- @param m MarioState
 --- @param accel number
@@ -54,12 +80,10 @@ local function update_spin_dash_angle(m, accel, lossFactor)
     facingDYaw = math.s16(m.faceAngle.y - m.slideYaw)
     newFacingDYaw = facingDYaw
 
-    --! -0x4000 not handled - can slide down a slope while facing perpendicular to it
-
     if (newFacingDYaw > 0 and newFacingDYaw <= 0x4000) then
         newFacingDYaw = newFacingDYaw - 0x200
         if (newFacingDYaw < 0) then newFacingDYaw = 0 end
-    elseif (newFacingDYaw > -0x4000 and newFacingDYaw < 0) then
+    elseif (newFacingDYaw >= -0x4000 and newFacingDYaw < 0) then
         newFacingDYaw = newFacingDYaw + 0x200
         if (newFacingDYaw > 0) then newFacingDYaw = 0 end
     elseif (newFacingDYaw > 0x4000 and newFacingDYaw < 0x8000) then
@@ -119,11 +143,10 @@ function update_spin_dashing(m, stopSpeed)
 
     oldSpeed = math.sqrt(m.slideVelX * m.slideVelX + m.slideVelZ * m.slideVelZ)
 
-    --! This is attempting to use trig derivatives to rotate Sonic's speed.
-    -- It is slightly off/asymmetric since it uses the new X speed, but the old
-    -- Z speed.
-    m.slideVelX = m.slideVelX + m.slideVelZ * (m.intendedMag / 32.0) * sideward * 0.05
-    m.slideVelZ = m.slideVelZ - m.slideVelX * (m.intendedMag / 32.0) * sideward * 0.05
+    local newSlideVelX = m.slideVelX + m.slideVelZ * (m.intendedMag / 32.0) * sideward * 0.05
+    local newSlideVelZ = m.slideVelZ - m.slideVelX * (m.intendedMag / 32.0) * sideward * 0.05
+    m.slideVelX = newSlideVelX
+    m.slideVelZ = newSlideVelZ
 
     newSpeed = math.sqrt(m.slideVelX * m.slideVelX + m.slideVelZ * m.slideVelZ)
 
@@ -246,7 +269,6 @@ local function update_sonic_running_speed(m)
     apply_slope_accel(m)
 end
 
-
 function set_sonic_jump_vel(m, jumpForce, initialVelY)
     local velY = 0
 
@@ -264,10 +286,6 @@ local function align_with_floor_but_better(m)
     m.marioObj.header.gfx.angle.x = find_floor_slope(m, 0x8000)
     m.marioObj.header.gfx.angle.z = find_floor_slope(m, 0x4000)
 end
-
-CUSTOM_CHAR_ANIM_SONIC_RUN = 'sonic_running_2'
-CUSTOM_CHAR_ANIM_SONIC_SPRING_RISE = 'sonic_spring'
-CUSTOM_CHAR_ANIM_SONIC_SPRING_FALL = 'sonic_spring_fall'
 
 --- @param m MarioState
 --- @param walkCap number
@@ -299,7 +317,6 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
                 if (val04 > 8.0) then
                     m.actionTimer = 2
                 else
-                    --(Speed Crash) If Mario's speed is more than 2^17.
                     if (val14 < 0x1000) then
                         val14 = 0x1000
                     else
@@ -317,7 +334,6 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
                 if (val04 > 8.0) or m.intendedMag > 8.0 then
                     m.actionTimer = 2
                 else
-                    -- (Speed Crash) If Mario's speed is more than 2^17.
                     if (val14 < 0x1000) then
                         val14 = 0x1000
                     else
@@ -463,15 +479,7 @@ function sonic_air_action_step(m, landAction, animation, stepArg, bonking)
                     m.vel.y = 0.0
                 end
 
-                --! Hands-free holding. Bonking while no wall is referenced
-                -- sets Mario's action to a non-holding action without
-                -- dropping the object, causing the hands-free holding
-                -- glitch. This can be achieved using an exposed ceiling,
-                -- out of bounds, grazing the bottom of a wall while
-                -- falling such that the final quarter step does not find a
-                -- wall collision, or by rising into the top of a wall such
-                -- that the final quarter step detects a ledge, but you are
-                -- not able to ledge grab it.
+                mario_stop_riding_and_holding(m)
                 if (m.forwardVel >= 38.0) then
                     set_mario_particle_flags(m, PARTICLE_VERTICAL_STAR, 0)
                     set_mario_action(m, ACT_BACKWARD_AIR_KB, 0)
@@ -516,25 +524,6 @@ function sonic_pitch_to_object(m, target)
     return atan2s(a, d - b)
 end
 
-_G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
-_G.ACT_SONIC_FALL         = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE)
-_G.ACT_AIR_SPIN           = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_FLAG_ATTACKING | ACT_GROUP_AIRBORNE)
-_G.ACT_HOMING_ATTACK      = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_FLAG_ATTACKING | ACT_GROUP_AIRBORNE)
-_G.ACT_SPIN_DASH_CHARGE   = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_GROUP_STATIONARY | ACT_FLAG_SHORT_HITBOX)
-_G.ACT_BOUNCE_LAND        = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_GROUP_STATIONARY | ACT_FLAG_SHORT_HITBOX | ACT_FLAG_ATTACKING)
-_G.ACT_SPIN_DASH          = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_MOVING | ACT_FLAG_SHORT_HITBOX | ACT_FLAG_ATTACKING)
-_G.ACT_SONIC_RUNNING      = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_MOVING)
-
-local SOUND_SPIN_JUMP           = audio_sample_load("z_sfx_sonic_spinjump.ogg")   -- Load audio sample
-local SOUND_SPIN_CHARGE         = audio_sample_load("z_sfx_sonic_spincharge.ogg") -- Load audio sample
-local SOUND_SPIN_RELEASE        = audio_sample_load("z_sfx_sonic_spinrelease.ogg") -- Load audio sample
-local SOUND_ROLL                = audio_sample_load("z_sfx_sonic_spinroll.ogg")   -- Load audio sample
-local SOUND_SONIC_BOUNCE        = audio_sample_load("z_sfx_sonic_bounce.ogg")   -- Load audio sample
-local SOUND_SONIC_HOMING        = audio_sample_load("z_sfx_sonic_homingselect.ogg")   -- Load audio sample
-local SOUND_SONIC_INSTA         = audio_sample_load("z_sfx_sonic_instashield.ogg")   -- Load audio sample
-local SOUND_SONIC_ELECTRIC_JUMP = audio_sample_load("z_sfx_sonic_electricjump.ogg")   -- Load audio sample
-local SOUND_COUNTDOWN_CD        = audio_sample_load("z_sfx_sonic_countdown.ogg") -- Load audio sample
-
 local sonicActionOverride = {
     [ACT_JUMP]         = ACT_SPIN_JUMP,
     [ACT_DOUBLE_JUMP]  = ACT_SPIN_JUMP,
@@ -562,16 +551,16 @@ local breakableObjects = {
 --- @return boolean
 --- Checks if `o` is breakable
 local function obj_is_breakable(o)
-    local breakable = false
     for _, id_bhv in ipairs(breakableObjects) do
-        breakable = obj_has_behavior_id(o, id_bhv) ~= 0
-        if breakable then return breakable end
+        if obj_has_behavior_id(o, id_bhv) ~= 0 then
+            return true
+        end
     end
+    return false
 end
 
 local function sonic_is_obj_targetable(obj)
-    local targetable = (obj_is_treasure_chest(obj) or obj_is_exclamation_box(obj) or obj_is_bully(obj) or obj_is_breakable(obj) or obj_is_attackable(obj)) and obj_is_valid_for_interaction(obj)
-    return targetable
+    return (obj_is_treasure_chest(obj) or obj_is_exclamation_box(obj) or obj_is_bully(obj) or obj_is_breakable(obj) or obj_is_attackable(obj)) and obj_is_valid_for_interaction(obj)
 end
 
 local sonicHomingLists = {
@@ -610,9 +599,7 @@ function sonic_find_homing_target(m, distmax)
     return target
 end
 
-
 --- @param m MarioState
---- @return integer
 local function perform_sonic_a_action(m)
     local o = sonic_find_homing_target(m, 700)
     local dist = dist_between_objects(m.marioObj, o)
@@ -631,10 +618,9 @@ local function perform_sonic_a_action(m)
         m.action = ACT_SPIN_JUMP
         m.vel.y = 30
     else
-
         if not e.sonic.actionADone and e.sonic.instashieldTimer <= 0 then
             if o and dist < 1000 then
-                return set_mario_action(m, ACT_HOMING_ATTACK, 0)
+                set_mario_action(m, ACT_HOMING_ATTACK, 0)
             else
                 if (m.flags & MARIO_WING_CAP) ~= 0 and fVel > 110 then
                     set_mario_particle_flags(m, PARTICLE_VERTICAL_STAR, 0)
@@ -643,7 +629,7 @@ local function perform_sonic_a_action(m)
                     cur_obj_shake_screen(SHAKE_POS_LARGE)
                     set_mario_action(m, ACT_FLYING, 0)
                 else
-                    return set_mario_action(m, ACT_AIR_SPIN, 1)
+                    set_mario_action(m, ACT_AIR_SPIN, 1)
                 end
             end
         end
@@ -651,7 +637,6 @@ local function perform_sonic_a_action(m)
 end
 
 --- @param m MarioState
---- @return integer
 local function perform_sonic_b_action(m)
     local e = gCharacterStates[m.playerIndex]
 
@@ -762,21 +747,19 @@ local function act_air_spin(m)
             local ray = collision_find_surface_on_ray(m.pos.x, m.pos.y + 30, m.pos.z,
             sins(m.faceAngle.y) * dist, 0, coss(m.faceAngle.y) * dist)
 
-            if ray.surface and ray.surface.normal.y <= 0.01 then
+            if ray.surface and ray.surface.normal.y > gLevelValues.ceilNormalMaxY and ray.surface.normal.y < gLevelValues.floorNormalMinY then
 
                 local wallAngle = wall_bounce(m, ray.surface.normal)
                 audio_sample_play(SOUND_SONIC_BOUNCE, m.pos, 1)
 
                 if m.actionTimer < 2 then
-                    m.vel.y = 30 * math.abs(realFVel) / 24
-
-                    m.vel.x = math.abs(realFVel / 2) * sins(wallAngle)
-                    m.vel.z = math.abs(realFVel / 2) * coss(wallAngle)
+                    m.vel.y = 30 * math.abs(e.sonic.realFVel) / 24
+                    m.vel.x = math.abs(e.sonic.realFVel / 2) * sins(wallAngle)
+                    m.vel.z = math.abs(e.sonic.realFVel / 2) * coss(wallAngle)
                 else
-                    m.vel.y = 20 * math.abs(realFVel) / 32
-
-                    m.vel.x = math.abs(realFVel) * sins(wallAngle)
-                    m.vel.z = math.abs(realFVel) * coss(wallAngle)
+                    m.vel.y = 20 * math.abs(e.sonic.realFVel) / 32
+                    m.vel.x = math.abs(e.sonic.realFVel) * sins(wallAngle)
+                    m.vel.z = math.abs(e.sonic.realFVel) * coss(wallAngle)
                 end
 
                 m.actionArg = 0
@@ -804,17 +787,22 @@ local function act_homing_attack(m)
     local o = sonic_find_homing_target(m, 700)
     local yaw, pitch
 
-    if o and sonic_is_obj_targetable(o) then
-        yaw = obj_angle_to_object(m.marioObj, o)
-        pitch = sonic_pitch_to_object(m, o) - degrees_to_sm64(3)
-        if o.collisionData then
-            pitch = sonic_pitch_to_object(m, o) + degrees_to_sm64(5)
-        end
-
-        m.vel.y = math.abs(m.forwardVel) * sins(-pitch)
-        m.vel.x = math.abs(m.forwardVel) * sins(yaw) * coss(pitch)
-        m.vel.z = math.abs(m.forwardVel) * coss(yaw) * coss(pitch)
+    if o == nil then
+        set_mario_action(m, ACT_SONIC_FALL, 3)
+        e.sonic.actionADone = true
+        return 1
     end
+
+    yaw = obj_angle_to_object(m.marioObj, o)
+    if o.collisionData then
+        pitch = sonic_pitch_to_object(m, o) + degrees_to_sm64(5)
+    else
+        pitch = sonic_pitch_to_object(m, o) - degrees_to_sm64(3)
+    end
+
+    m.vel.y = math.abs(m.forwardVel) * sins(-pitch)
+    m.vel.x = math.abs(m.forwardVel) * sins(yaw) * coss(pitch)
+    m.vel.z = math.abs(m.forwardVel) * coss(yaw) * coss(pitch)
 
     if m.actionTimer <= 0 then
         audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
@@ -858,11 +846,6 @@ local function act_homing_attack(m)
     m.faceAngle.x = m.faceAngle.x + (0x2000 * spinSpeed)
     m.marioObj.header.gfx.angle.x = m.faceAngle.x
 
-    if o == nil then
-        set_mario_action(m, ACT_SONIC_FALL, 3)
-        e.actionADone = true
-    end
-
     m.actionTimer = m.actionTimer + 1
 end
 
@@ -892,7 +875,7 @@ local function act_spin_dash_charge(m)
     local e = gCharacterStates[m.playerIndex]
     local MINDASH = 4
     local MAXDASH = 128
-    local decel = (e.sonic.spinCharge / 0.125) / 256
+    local decel = e.sonic.spinCharge / 32
 
     if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
         audio_sample_play(SOUND_SPIN_CHARGE, m.pos, 1)
@@ -1005,7 +988,7 @@ local function act_sonic_running(m)
     end
 
     if (check_ground_dive_or_punch(m)) ~= 0 then
-        return true
+        return 1
     end
 
     if (m.input & INPUT_ZERO_MOVEMENT) ~= 0 then
@@ -1133,11 +1116,9 @@ function before_set_sonic_action(m, action, actionArg)
     end
 end
 
-
-local prevRings = gPlayerSyncTable[0].rings
 function on_set_sonic_action(m)
-    if m.action == ACT_BURNING_JUMP then
-        prevRings = gPlayerSyncTable[0].rings
+    if m.playerIndex == 0 and m.action == ACT_BURNING_JUMP then
+        sPrevRings = gPlayerSyncTable[0].rings
     end
 
     if m.faceAngle.x ~= 0 then
@@ -1157,13 +1138,13 @@ function on_set_sonic_action(m)
     end
 end
 
-local powerTimer = 0
-
 --- @param m MarioState
 function sonic_update(m)
     local e = gCharacterStates[m.playerIndex]
 
-    powerTimer = 0
+    if m.playerIndex == 0 then
+        sPowerTimer = 0
+    end
 
     local groundMovingActions = {
         [ACT_SONIC_RUNNING] = 1,
@@ -1180,7 +1161,7 @@ function sonic_update(m)
 
     if (m.action & ACT_FLAG_AIR) ~= 0 and m.action ~= ACT_GROUND_POUND then
         if m.vel.y >= 0 then
-            prevHeight = m.pos.y
+            e.sonic.prevHeight = m.pos.y
         end
     end
 
@@ -1191,7 +1172,7 @@ function sonic_update(m)
 
     -- Bounce attack that's just a modified ground pound.
     if m.action == ACT_GROUND_POUND then
-        smlua_anim_util_set_animation(m.marioObj, 'sonic_before_ground_pound')
+        smlua_anim_util_set_animation(m.marioObj, CUSTOM_CHAR_ANIM_SONIC_BEFORE_GROUND_POUND)
         if m.actionTimer > 15 then
             set_character_animation(m, CHAR_ANIM_A_POSE)
             m.marioObj.header.gfx.animInfo.animID = -1
@@ -1236,7 +1217,20 @@ function sonic_update(m)
             while obj ~= nil do
                 if (obj_is_attackable(obj) or obj_is_breakable_object(obj) or obj_has_behavior_id(obj, id_bhvBobomb) ~= 0) then
                     if (dist_between_objects(m.marioObj, obj) <= 280 and obj_is_valid_for_interaction(obj)) then
+
+                        -- Kicks the object and send it flying
                         obj.oInteractStatus = ATTACK_KICK_OR_TRIP + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
+                        obj.oFaceAngleYaw = obj_angle_to_point(obj, m.pos.x, m.pos.z)
+                        obj.oMoveAngleYaw = math.s16(obj.oFaceAngleYaw + 0x8000)
+                        obj.oVelX = 60 * sins(obj.oMoveAngleYaw)
+                        obj.oVelZ = 60 * coss(obj.oMoveAngleYaw)
+                        obj.oForwardVel = 60
+
+                        -- Stops momentum on impact
+                        mario_set_forward_vel(m, 0)
+                        if m.playerIndex == 0 then set_camera_shake_from_hit(SHAKE_ATTACK) end
+                        set_mario_particle_flags(m, PARTICLE_TRIANGLE, 0)
+                        play_sound(SOUND_ACTION_HIT_2, m.marioObj.header.gfx.cameraToObject)
                     end
                 end
                 obj = obj_get_next(obj)
@@ -1244,7 +1238,7 @@ function sonic_update(m)
         end
     end
 
-    if m.health > 0x000 or m.action ~= ACT_BUBBLED then
+    if m.health > 0xFF or m.action ~= ACT_BUBBLED then
         sonic_drowning(m, e)
     end
     sonic_ring_health(m, e)
@@ -1262,92 +1256,111 @@ function sonic_things_for_non_sonic_chars(m)
     end
 
     -- Reenable the vanilla power meter when the moveset is off.
-    if powerTimer == 18 then hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) | HUD_DISPLAY_FLAG_POWER) end
-    powerTimer = powerTimer + 1
+    if sPowerTimer == 18 then hud_set_value(HUD_DISPLAY_FLAGS, hud_get_value(HUD_DISPLAY_FLAGS) | HUD_DISPLAY_FLAG_POWER) end
+    sPowerTimer = sPowerTimer + 1
 end
 
 function sonic_drowning(m, e)
-    if m.health <= 0x000 then return end
+    if m.health <= 0xFF then return end
 
-    local warning = {[25] = true, [20] = true, [15] = true}
+    local warning = {
+        [750] = true, -- 25 seconds
+        [600] = true, -- 20 seconds
+        [450] = true -- 15 seconds
+    }
+    local getOutNow = {
+        [360] = 5, -- 12 seconds
+        [300] = 4, -- 10 seconds
+        [240] = 3, -- 8 seconds
+        [180] = 2, -- 6 seconds
+        [120] = 1, -- 4 seconds
+        [60] = 0 -- 2 seconds
+    }
 
-    local getOutNow = {[12] = 5,
-                       [10] = 4,
-                        [8] = 3,
-                        [6] = 2,
-                        [4] = 1,
-                        [2] = 0}
     if e.sonic.oxygen <= 0 then
-        m.health = 0x000
+        m.health = 0xFF
+
+        -- Empty rings and hide rings meter
+        if m.playerIndex == 0 then
+            gPlayerSyncTable[0].rings = 0
+            RingMeterHUD.animation = RING_METER_HIDDEN
+        end
 
         if (m.input & INPUT_IN_POISON_GAS) ~= 0 then
             set_mario_action(m, ACT_SUFFOCATION, 0)
         else
             set_mario_action(m, ACT_DROWNING, 0)
         end
+        return
     end
 
     if m.pos.y + m.marioObj.hitboxHeight - 50 < m.waterLevel or (m.input & INPUT_IN_POISON_GAS) ~= 0 then
-        m.health = 0x16000
-        e.sonic.oxygenTimer = e.sonic.oxygenTimer - 1
-        if e.sonic.oxygenTimer <= 0 then
-            if warning[e.sonic.oxygen] then
-                play_sound(SOUND_MOVING_ALMOST_DROWNING, m.marioObj.header.gfx.cameraToObject)
+        m.health = 0x880
+        e.sonic.oxygen = e.sonic.oxygen - 1
 
-            elseif getOutNow[e.sonic.oxygen] then
-                audio_sample_play(SOUND_COUNTDOWN_CD, m.marioObj.header.gfx.cameraToObject, 2)
-                spawn_orange_number(getOutNow[e.sonic.oxygen], 0, 100, 0)
-            end
-
-            e.sonic.oxygen = e.sonic.oxygen - 1
-            --djui_chat_message_create(tostring(e.sonic.oxygen))
-            e.sonic.oxygenTimer = 30
+        if warning[e.sonic.oxygen] then
+            play_sound(SOUND_MOVING_ALMOST_DROWNING, m.marioObj.header.gfx.cameraToObject)
+        elseif getOutNow[e.sonic.oxygen] then
+            audio_sample_play(SOUND_COUNTDOWN_CD, m.pos, 2)
+            spawn_orange_number(getOutNow[e.sonic.oxygen], 0, 100, 0)
         end
-
+        --djui_chat_message_create(tostring(e.sonic.oxygen))
     else
-        e.sonic.oxygenTimer = 30
-        e.sonic.oxygen = 30
+        e.sonic.oxygen = 900
     end
 end
 
-local timeBetweenDamages = 0
-local flingFactor = 0
 function sonic_ring_health(m, e)
     if m.playerIndex ~= 0 then return end
-    local realFlingFactor = math.min(math.sqrt(flingFactor ^ 2 + (m.hurtCounter / 4) ^ 2), 8)
+    local realFlingFactor = math.clamp(math.sqrt(sRingFlingFactor ^ 2 + (m.hurtCounter / 4) ^ 2), 1, 8)
 
     --djui_chat_message_create(tostring(realFlingFactor))
 
     --if (m.controller.buttonPressed & X_BUTTON) ~= 0 then gPlayerSyncTable[0].rings = gPlayerSyncTable[0].rings + 20 end
+
+    -- Set health to max to hide the regular health meter
+    if m.health > 0xFF then
+        m.health = 0x880
+    end
 
     if m.hurtCounter > 0 then
         if gPlayerSyncTable[0].rings > 32 then gPlayerSyncTable[0].rings = 32 end
         m.hurtCounter = 0
 
         if gPlayerSyncTable[0].rings > 0 then
-              for i = 0,gPlayerSyncTable[0].rings -1,1 do
-            spawn_sync_object(
-                id_bhvSonicRing,
-                E_MODEL_YELLOW_COIN,
-                m.pos.x, m.pos.y, m.pos.z,
-                function (o)
-                    o.oVelY = math.random(-15,15) * realFlingFactor
-                    o.oForwardVel = math.random(5,15) * realFlingFactor
-                    o.oMoveAngleYaw = random_u16()
-                end)
+            for i = 0,gPlayerSyncTable[0].rings -1,1 do
+
+                -- Near ground, send rings upwards only
+                local minY, maxY, flingFactorY
+                if m.pos.y < m.floorHeight + 100 then
+                    minY, maxY, flingFactorY = 20, 30, math.max(1, realFlingFactor / 2)
+                else
+                    minY, maxY, flingFactorY = -10, 15, realFlingFactor
+                end
+
+                spawn_sync_object(
+                    id_bhvSonicRing,
+                    E_MODEL_YELLOW_COIN,
+                    m.pos.x, m.pos.y, m.pos.z,
+                    function (o)
+                        o.oVelY = math.random(minY, maxY) * flingFactorY
+                        o.oForwardVel = math.random(5, 10) * realFlingFactor
+                        o.oMoveAngleYaw = random_u16()
+                    end
+                )
             end
-            m.health = 0x16000
+            m.health = 0x880
         else
-            m.health = 0x000
+            m.health = 0xFF
         end
 
-        if timeBetweenDamages > 0 then flingFactor = flingFactor + 1 end
+        if sRingTimeBetweenDamages > 0 then sRingFlingFactor = sRingFlingFactor + 1 end
 
         gPlayerSyncTable[0].rings = 0
-        timeBetweenDamages = 240
+        sRingTimeBetweenDamages = 240 -- 8 seconds
     end
 
-    if timeBetweenDamages <= 0 then flingFactor = 0 end
+    if sRingTimeBetweenDamages <= 0 then sRingFlingFactor = 0 end
 
     local burnActions = {
         [ACT_BURNING_JUMP] = true,
@@ -1356,8 +1369,8 @@ function sonic_ring_health(m, e)
     }
 
     if burnActions[m.action] then
-        if prevRings > 0 then
-            m.health = 0x16000
+        if sPrevRings > 0 then
+            m.health = 0x880
         end
         if gPlayerSyncTable[0].rings > 0 then
             spawn_sync_object(
@@ -1374,21 +1387,20 @@ function sonic_ring_health(m, e)
         end
 
         if m.action == ACT_BURNING_JUMP then
-            if prevRings == 0 then
-                m.health = 0x0000
+            if sPrevRings == 0 then
+                m.health = 0xFF
             else
-                m.health = 0x16000
+                m.health = 0x880
             end
         end
     end
 
-    timeBetweenDamages = timeBetweenDamages - 1
+    sRingTimeBetweenDamages = sRingTimeBetweenDamages - 1
 end
 
 function sonic_value_refresh(m)
     local e = gCharacterStates[m.playerIndex]
-    e.sonic.oxygenTimer = 30
-    e.sonic.oxygen = 30
+    e.sonic.oxygen = 900
     gPlayerSyncTable[0].rings = 0
     RingMeterHUD.animation = RING_METER_HIDDEN
 end
@@ -1411,7 +1423,7 @@ function sonic_allow_interact(m, o, intType)
     end
 
     if bounceTypes[intType] then
-        prevVelY = m.vel.y
+        e.sonic.prevVelY = m.vel.y
     end
 
     if bounceTypes[intType] and (o.oInteractionSubtype & INT_SUBTYPE_TWIRL_BOUNCE) == 0 then
@@ -1424,7 +1436,6 @@ function sonic_allow_interact(m, o, intType)
             return false
         end
     end
-
 end
 
 local badnikBounceActions = {
@@ -1446,7 +1457,8 @@ function sonic_on_interact(m, o, intType)
     end
 
     if bounceTypes[intType] and (o.oInteractionSubtype & INT_SUBTYPE_TWIRL_BOUNCE) == 0 then
-        if prevVelY < 0 and m.pos.y > o.oPosY then
+        local e = gCharacterStates[m.playerIndex]
+        if e.sonic.prevVelY < 0 and m.pos.y > o.oPosY then
             if badnikBounceActions[m.action] then
                 if m.action == ACT_GROUND_POUND then
                     set_mario_particle_flags(m, PARTICLE_HORIZONTAL_STAR, 0)
@@ -1455,7 +1467,7 @@ function sonic_on_interact(m, o, intType)
                 end
 
                 o.oInteractStatus = ATTACK_FROM_ABOVE + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
-                badnik_bounce(m, prevHeight, 4)
+                badnik_bounce(m, e.sonic.prevHeight, 4)
             end
         end
     end
@@ -1467,11 +1479,10 @@ function sonic_on_interact(m, o, intType)
     end
 end
 
-
 -- Around here is unused code for slope flinging that's pretty broken. It's currently disabled, but the code will be here in case the feature is revisited.
-FLOOR_LOWER_LIMIT = gLevelValues.floorLowerLimit - gLevelValues.cellHeightLimit
+local FLOOR_LOWER_LIMIT = gLevelValues.floorLowerLimit - gLevelValues.cellHeightLimit
 
-function sonic_slope_detach(m, nextPos)
+local function sonic_slope_detach(m, nextPos)
     local e = gCharacterStates[m.playerIndex]
     local floorDYaw = m.floorAngle - m.faceAngle.y
 
@@ -1499,7 +1510,7 @@ function sonic_slope_detach(m, nextPos)
     return detach
 end
 
-function perform_ground_quarter_step(m, nextPos)
+local function perform_ground_quarter_step(m, nextPos)
     local lowerWcd = collision_get_temp_wall_collision_data()
     local upperWcd = collision_get_temp_wall_collision_data()
 
@@ -1581,7 +1592,7 @@ function perform_ground_quarter_step(m, nextPos)
     return GROUND_STEP_NONE
 end
 
-function sonic_perform_ground_step(m)
+local function sonic_perform_ground_step(m)
     local i = 0
     local stepResult
     local intendedPos = {x = 0, y = 0, z = 0}
@@ -1623,7 +1634,8 @@ function sonic_perform_ground_step(m)
 end
 
 function sonic_before_phys_step(m, stepType, stepArg)
-    if m.playerIndex ~= 0 then return end
+    local e = gCharacterStates[m.playerIndex]
+
     if m.pos.y < m.waterLevel then
         move_with_current(m)
         if (m.action & ACT_FLAG_AIR) ~= 0 then
@@ -1631,18 +1643,18 @@ function sonic_before_phys_step(m, stepType, stepArg)
         end
     end
 
-    if physTimer > 0 then
-        realFVel = math.sqrt((m.pos.x - lastforwardPos.x) ^ 2 + (m.pos.z - lastforwardPos.z) ^ 2)
+    if e.sonic.physTimer > 0 then
+        e.sonic.realFVel = math.sqrt((m.pos.x - e.sonic.lastforwardPos.x) ^ 2 + (m.pos.z - e.sonic.lastforwardPos.z) ^ 2)
         local speedAngle = atan2s(m.vel.z, m.vel.x)
         local intendedDYaw = m.faceAngle.y - speedAngle
 
         if math.abs(intendedDYaw) > 0x4000 then
-            realFVel = realFVel * -1
+            e.sonic.realFVel = e.sonic.realFVel * -1
         end
 
-        vec3f_copy(lastforwardPos, m.pos)
+        vec3f_copy(e.sonic.lastforwardPos, m.pos)
 
-        physTimer = 0
+        e.sonic.physTimer = 0
     end
 
     --[[if stepType == STEP_TYPE_GROUND then
@@ -1650,8 +1662,12 @@ function sonic_before_phys_step(m, stepType, stepArg)
     end]]
 
     --djui_chat_message_create(tostring(m.floor.normal.x) .. ", " .. tostring(m.floor.normal.y) .. ", " .. tostring(m.floor.normal.z))
-    physTimer = physTimer + 1
+    e.sonic.physTimer = e.sonic.physTimer + 1
 end
+
+---------------
+-- Sonic HUD --
+---------------
 
 local homingActs = {
     [ACT_SPIN_JUMP]     = true,
@@ -1660,11 +1676,10 @@ local homingActs = {
     [ACT_HOMING_ATTACK] = true,
 }
 
-local scaleTimer = 0
-local prevScale = 1
-local prevHudPos = gVec3fZero()
-local hudPos = gVec3fZero()
-local prevTarget
+local homingCursorScaleTimer = 0
+local homingCursorPrevScale = 1
+local homingCursorPrevHudPos = gVec3fZero()
+local homingCursorPrevTarget
 
 function sonic_hud_stuff()
     sonic_homing_hud()
@@ -1686,33 +1701,33 @@ function sonic_homing_hud()
 
         if o and not e.sonic.actionADone then
             local pos = gVec3fZero()
-            scaleTimer = scaleTimer + 1
+            homingCursorScaleTimer = homingCursorScaleTimer + 1
 
-            if prevTarget ~= o then
-                prevTarget = o
+            if homingCursorPrevTarget ~= o then
+                homingCursorPrevTarget = o
                 audio_sample_play(SOUND_SONIC_HOMING, l.pos, 3)
             end
 
             object_pos_to_vec3f(pos, o)
+            local hudPos = gVec3fZero()
             local onScreen = djui_hud_world_pos_to_screen_pos(pos, hudPos)
             if onScreen then
-                local scale = (((math.sin(scaleTimer / 5) / 16) + 1)) * (-300 / hudPos.z * djui_hud_get_fov_coeff())
-                djui_hud_render_texture_interpolated(TEX_HOMING_CURSOR, prevHudPos.x - 64 * prevScale, prevHudPos.y - 64 * prevScale, 8 * prevScale, 8 * prevScale, hudPos.x - 64 * scale, hudPos.y - 64 * scale, 8 * scale, 8 * scale)
-                vec3f_copy(prevHudPos, hudPos)
-                prevScale = scale
+                local scale = (((math.sin(homingCursorScaleTimer / 5) / 16) + 1)) * (-300 / hudPos.z * djui_hud_get_fov_coeff())
+                djui_hud_render_texture_interpolated(TEX_HOMING_CURSOR, homingCursorPrevHudPos.x - 64 * homingCursorPrevScale, homingCursorPrevHudPos.y - 64 * homingCursorPrevScale, 8 * homingCursorPrevScale, 8 * homingCursorPrevScale, hudPos.x - 64 * scale, hudPos.y - 64 * scale, 8 * scale, 8 * scale)
+                vec3f_copy(homingCursorPrevHudPos, hudPos)
+                homingCursorPrevScale = scale
             end
         else
-            scaleTimer = 0
-            prevTarget = nil
+            homingCursorScaleTimer = 0
+            homingCursorPrevTarget = nil
         end
     else
-        scaleTimer = 0
-        prevTarget = nil
+        homingCursorScaleTimer = 0
+        homingCursorPrevTarget = nil
     end
 end
 
-local flashTimer = 0
-local flash = 0
+local ringDisplayFlashTimer = 0
 
 function sonic_ring_display(rings)
     local varRings = tostring(rings)
@@ -1722,11 +1737,9 @@ function sonic_ring_display(rings)
     djui_hud_set_color(255, 255, 255, 255)
 
     if rings <= 0 then
-        if flashTimer > 30 then flashTimer = 0 end
-
-        flashTimer = flashTimer + 1
+        ringDisplayFlashTimer = (ringDisplayFlashTimer + 1) % 30
     else
-        flashTimer = 0
+        ringDisplayFlashTimer = 0
     end
     local x = (djui_hud_get_screen_width() / 2 - 20) - (djui_hud_measure_text(varRings) * 0.5) / 2 - 1
     local x2 = djui_hud_get_screen_width() / 2 - 52
@@ -1741,7 +1754,7 @@ function sonic_ring_display(rings)
         sonic_ring_display_visible(RingMeterHUD, gPlayerSyncTable[0].rings)
     end
 
-    if RingMeterHUD.animation == 0 and rings > 0 then
+    if RingMeterHUD.animation == RING_METER_HIDDEN and rings > 0 then
         RingMeterHUD.visibleTimer = 0
         RingMeterHUD.animation = RING_METER_EMPHASIZING
     end
@@ -1749,7 +1762,7 @@ function sonic_ring_display(rings)
     if RingMeterHUD.animation ~= RING_METER_HIDDEN then
         djui_hud_render_texture_interpolated(TEX_SONIC_RING_METER, x2, RingMeterHUD.prevY - 25, 1, 1, x2, RingMeterHUD.y - 25, 1, 1)
 
-        if math.floor(flashTimer / 15) == 1 then
+        if math.floor(ringDisplayFlashTimer / 15) == 1 then
             djui_hud_set_color(255, 0, 0, 255)
         else
             djui_hud_set_color(255, 255, 0, 255)
@@ -1878,7 +1891,7 @@ local function bhv_ring_loop(o)
 
     if (o.oMoveFlags & OBJ_MOVE_BOUNCE) ~= 0 then
         --cur_obj_play_sound_2(SOUND_GENERAL_COIN_DROP)
-        play_sound_with_freq_scale(SOUND_GENERAL_COIN_DROP, o.header.gfx.pos, math.random(980, 1030) / 1000)
+        play_sound_with_freq_scale(SOUND_GENERAL_COIN_DROP, o.header.gfx.cameraToObject, math.random(980, 1030) / 1000)
 
         if (sp1C ~= nil and sp1C.normal.y < 0.9) then
             sp1A = atan2s(sp1C.normal.z, sp1C.normal.x)
@@ -1905,12 +1918,20 @@ end
 function ringteract(m, o, intType) -- This is the ring interaction for ALL characters.
     if obj_has_behavior_id(o, id_bhvSonicRing) ~= 0 then
         m.healCounter = 4
-        gPlayerSyncTable[0].rings = gPlayerSyncTable[0].rings + 1
+        if m.playerIndex == 0 then
+            gPlayerSyncTable[0].rings = gPlayerSyncTable[0].rings + 1
+            if m.action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER) ~= 0 then
+                play_sound(SOUND_GENERAL_COIN_WATER, m.marioObj.header.gfx.cameraToObject)
+            else
+                play_sound(SOUND_GENERAL_COIN, m.marioObj.header.gfx.cameraToObject)
+            end
+        end
     end
 
     if intType == INTERACT_COIN then
-        gPlayerSyncTable[0].rings = gPlayerSyncTable[0].rings + o.oDamageOrCoinValue
-        --m.healCounter = 0
+        if m.playerIndex == 0 then
+            gPlayerSyncTable[0].rings = gPlayerSyncTable[0].rings + o.oDamageOrCoinValue
+        end
     end
 end
 
