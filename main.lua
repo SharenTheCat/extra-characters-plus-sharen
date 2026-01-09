@@ -1886,6 +1886,7 @@ local ultraBrosCredits = {
         "Chars_64,Render Icons",
         "WaterVapor,DK Render",
         "wwolforam,Sonic Render",
+        "SMSAlfredo,Coder",
     },
     {
         name = TEXT_PACK_NAME .. " Voice Actors",
