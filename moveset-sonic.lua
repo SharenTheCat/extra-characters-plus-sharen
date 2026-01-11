@@ -1484,7 +1484,7 @@ local badnikBounceActions = {
 
 function sonic_on_interact(m, o, intType)
     local e = gCharacterStates[m.playerIndex]
-    if (m.action == ACT_SONIC_RUNNING) and not m.heldObj and m.pos.y - 30 >= m.waterLevel then
+    if (m.action == ACT_SONIC_RUNNING) and not m.heldObj and m.pos.y + 80 >= m.waterLevel then
         if obj_has_behavior_id(o, id_bhvDoorWarp) ~= 0 then
             set_mario_action(m, ACT_DECELERATING, 0)
             interact_warp_door(m, 0, o)
@@ -1499,12 +1499,14 @@ function sonic_on_interact(m, o, intType)
         if e.sonic.prevVelY < 0 and m.pos.y > o.oPosY then
             if badnikBounceActions[m.action] then
                 if m.action == ACT_GROUND_POUND then
+                    o.oInteractStatus = ATTACK_GROUND_POUND_OR_TWIRL + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
                     set_mario_particle_flags(m, PARTICLE_HORIZONTAL_STAR, 0)
                     play_sound(SOUND_ACTION_HIT_2, m.marioObj.header.gfx.cameraToObject)
                     set_mario_action(m, ACT_AIR_SPIN, 0)
+                else
+                    o.oInteractStatus = ATTACK_FROM_ABOVE + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
                 end
 
-                o.oInteractStatus = ATTACK_FROM_ABOVE + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
                 badnik_bounce(m, e.sonic.prevHeight, 4)
             end
         end
