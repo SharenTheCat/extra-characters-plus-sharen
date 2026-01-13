@@ -746,12 +746,13 @@ local function act_air_spin(m)
                     e.sonic.wallSpam = e.sonic.wallSpam + 1
                 end
 
-                local realVelFloored = math.max(math.abs(e.sonic.realFVel), 20) - e.sonic.wallSpam
-                if m.actionTimer < 2 then
-                    m.vel.y = 30 * realVelFloored / 24
+                local realVelFloored = math.max(math.abs(e.sonic.realFVel), 20)
+                if m.actionTimer < 2 and e.sonic.wallSpam == 0 then
+                    m.vel.y = 30 * realVelFloored / 32
                 else
                     m.vel.y = 20 * realVelFloored / 32
                 end
+                m.vel.y = m.vel.y - e.sonic.wallSpam
                 m.vel.x = realVelFloored * sins(wallAngle)
                 m.vel.z = realVelFloored * coss(wallAngle)
 
