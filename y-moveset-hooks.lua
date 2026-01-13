@@ -117,10 +117,11 @@ local function on_character_select_load()
     character_hook_moveset(CT_SONIC, HOOK_ON_SET_MARIO_ACTION, on_set_sonic_action)
     character_hook_moveset(CT_SONIC, HOOK_ALLOW_INTERACT, sonic_allow_interact)
     character_hook_moveset(CT_SONIC, HOOK_ON_INTERACT, sonic_on_interact)
-    character_hook_moveset(CT_SONIC, HOOK_ALLOW_FORCE_WATER_ACTION, function () return false end)
+    character_hook_moveset(CT_SONIC, HOOK_ALLOW_FORCE_WATER_ACTION, sonic_allow_water)
     character_hook_moveset(CT_SONIC, HOOK_MARIO_UPDATE, sonic_update)
     character_hook_moveset(CT_SONIC, HOOK_BEFORE_PHYS_STEP, sonic_before_phys_step)
-    character_hook_moveset(CT_SONIC, HOOK_ON_HUD_RENDER_BEHIND, sonic_hud_stuff)
+    character_hook_moveset(CT_SONIC, HOOK_ON_HUD_RENDER_BEHIND, sonic_homing_hud)
+    character_add_health_meter(CT_SONIC, sonic_health_meter)
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)

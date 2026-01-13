@@ -53,6 +53,8 @@
 --- @field public physTimer integer
 --- @field public lastforwardPos Vec3f
 --- @field public realFVel number
+--- @field public wallSpam number
+--- @field public prevWallAngle number
 
 --- @class CharacterState
 --- @field public mario MarioState

@@ -1714,22 +1714,7 @@ extraCharacters = {
         graffiti = get_texture_info("char-select-graffiti-sonic"),
         camScale = 0.9,
         offset = 0,
-        meter = {
-            label = {
-                left = get_texture_info("char-select-sonic-meter-left"),
-                right = get_texture_info("char-select-sonic-meter-right"),
-            },
-            pie = {
-                [1] = get_texture_info("char_select_custom_meter_pie1"),
-                [2] = get_texture_info("char_select_custom_meter_pie2"),
-                [3] = get_texture_info("char_select_custom_meter_pie3"),
-                [4] = get_texture_info("char_select_custom_meter_pie4"),
-                [5] = get_texture_info("char_select_custom_meter_pie5"),
-                [6] = get_texture_info("char_select_custom_meter_pie6"),
-                [7] = get_texture_info("char_select_custom_meter_pie7"),
-                [8] = get_texture_info("char_select_custom_meter_pie8"),
-            }
-        },
+        meter = nil, -- meter code in moveset
         caps = {
             normal =     smlua_model_util_get_id("segasonic_cap_geo"),
             wing =       smlua_model_util_get_id("segasonic_wing_cap_geo"),

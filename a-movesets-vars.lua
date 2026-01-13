@@ -49,4 +49,8 @@ for i = 0, (MAX_PLAYERS - 1) do
     e.sonic.physTimer = 0
     e.sonic.lastforwardPos = gVec3fZero()
     e.sonic.realFVel = 0
+    e.sonic.wallSpam = 0
+    e.sonic.prevWallAngle = -1
+
+    gPlayerSyncTable[i].rings = 0
 end
