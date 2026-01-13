@@ -1430,7 +1430,7 @@ function sonic_ring_health(m, e)
 end
 
 function sonic_value_refresh(m)
-    if not m then m = gMarioStates[0] end
+    local m = type(m) == "table" and m or gMarioStates[0] -- Fall back to local index
     local e = gCharacterStates[m.playerIndex]
     local p = gPlayerSyncTable[m.playerIndex]
     e.sonic.oxygen = 900
@@ -1831,12 +1831,9 @@ end
 
 --- @param m MarioState
 function sonic_defacto_fix(m)
-    if gCSPlayers[m.playerIndex].movesetToggle and character_get_current_number() == CT_SONIC then
-        local floorDYaw = m.floorAngle - m.faceAngle.y
-
-        if (m.floor.normal.y < 0.9 and (math.abs(floorDYaw) <= 0x4500 and math.abs(floorDYaw) >= 0x3500)) then
-            return math.max(math.abs(sins(floorDYaw)), m.floor.normal.y)
-        end
+    local floorDYaw = m.floorAngle - m.faceAngle.y
+    if (m.floor.normal.y < 0.9 and (math.abs(floorDYaw) <= 0x4500 and math.abs(floorDYaw) >= 0x3500)) then
+        return math.max(math.abs(sins(floorDYaw)), m.floor.normal.y)
     end
     return m.floor.normal.y
 end
@@ -1850,7 +1847,6 @@ hook_mario_action(ACT_AIR_SPIN, act_air_spin)
 hook_mario_action(ACT_HOMING_ATTACK, { every_frame = act_homing_attack, gravity = function () end }, (INT_FAST_ATTACK_OR_SHELL | INT_KICK | INT_HIT_FROM_ABOVE))
 hook_mario_action(ACT_BOUNCE_LAND, act_bounce_land, INT_GROUND_POUND_OR_TWIRL)
 
-hook_event(HOOK_MARIO_OVERRIDE_PHYS_STEP_DEFACTO_SPEED, sonic_defacto_fix)
 hook_event(HOOK_ON_DEATH, sonic_value_refresh)
 hook_event(HOOK_ON_LEVEL_INIT, sonic_value_refresh)
 hook_event(HOOK_MARIO_UPDATE, sonic_things_for_non_sonic_chars)
