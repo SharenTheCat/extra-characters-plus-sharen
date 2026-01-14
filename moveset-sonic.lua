@@ -418,9 +418,8 @@ function sonic_air_action_step(m, landAction, animation, stepArg, bonking)
         fVel = fVel * -1
     end
 
-    local speedAngle = atan2s(m.vel.y, fVel)
     local steepness = math.sqrt(m.floor.normal.x ^ 2 + m.floor.normal.z ^ 2)
-    local floorDYaw = m.floorAngle - m.faceAngle.y
+    local floorDYaw = m.floorAngle - hSpeedAngle
 
     --djui_chat_message_create(tostring(coss(floorDYaw)))
 
