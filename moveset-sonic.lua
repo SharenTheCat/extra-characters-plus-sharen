@@ -259,8 +259,8 @@ function set_sonic_jump_vel(m, jumpForce, initialVelY)
 
     if initialVelY then velY = initialVelY end
 
-    m.vel.x = m.vel.x + jumpForce * m.floor.normal.x
-    m.vel.z = m.vel.z + jumpForce * m.floor.normal.z
+    m.vel.x = m.vel.x * m.floor.normal.y + jumpForce * m.floor.normal.x
+    m.vel.z = m.vel.z * m.floor.normal.y + jumpForce * m.floor.normal.z
 
     m.vel.y = velY + jumpForce * m.floor.normal.y
 end
@@ -1167,7 +1167,9 @@ function sonic_update(m)
     }
 
     if groundMovingActions[m.action] then
-        e.sonic.groundYVel = -math.sqrt(m.vel.x ^ 2 + m.vel.z ^ 2) * sins(find_floor_slope(m, 0x8000))
+        local steepness = sins(find_floor_slope(m, 0x8000)) * math.sign(m.forwardVel)
+
+        e.sonic.groundYVel = -math.sqrt(m.vel.x ^ 2 + m.vel.z ^ 2) * steepness
     else
         e.sonic.groundYVel = 0
     end

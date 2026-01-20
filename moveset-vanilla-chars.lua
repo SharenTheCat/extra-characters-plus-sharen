@@ -429,7 +429,7 @@ function luigi_update(m)
                 smlua_anim_util_set_animation(m.marioObj, "LUIGI_ANIM_FLUTTER")
             end
             set_anim_to_frame(m, e.animFrame)
-            e.animFrame = e.animFrame + 4
+            e.animFrame = e.animFrame + 3
             if e.animFrame >= m.marioObj.header.gfx.animInfo.curAnim.loopEnd then
                 e.animFrame = e.animFrame - m.marioObj.header.gfx.animInfo.curAnim.loopEnd
             end
