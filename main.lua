@@ -1875,6 +1875,7 @@ local ultraBrosCredits = {
         "Chars_64,Render Icons",
         "WaterVapor,DK Render",
         "wwolforam,Sonic Render",
+        "ThatGurlTilly,Birdo Model",
         "SMSAlfredo,Coder",
     },
     {
@@ -1893,6 +1894,7 @@ local ultraBrosCredits = {
     },
     {
         name = TEXT_PACK_NAME .. " Graffiti Artists",
+        "WaflesAAA",
         "SAWhane,Sonic",
     },
 }
