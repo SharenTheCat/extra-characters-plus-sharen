@@ -44,7 +44,7 @@
 --- @field public peakHeight integer
 --- @field public actionADone boolean
 --- @field public actionBDone boolean
---- @field public bounced boolean
+--- @field public bounceCooldown integer
 --- @field public spindashState integer
 --- @field public instashieldTimer integer
 --- @field public oxygen integer

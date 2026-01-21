@@ -625,9 +625,9 @@ local function perform_sonic_b_action(m)
     local e = gCharacterStates[m.playerIndex]
 
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
-        if e.sonic.bounced then return end
+        if e.sonic.bounceCooldown > 0 then return end
         set_mario_action(m, ACT_GROUND_POUND, 0)
-        e.sonic.bounced = true
+        e.sonic.bounceCooldown = 36
     else
         if e.sonic.actionBDone then return end
 
@@ -647,7 +647,7 @@ end
 ---@param m MarioState
 local function act_spin_jump(m)
     local e = gCharacterStates[m.playerIndex]
-    
+
     if m.actionTimer == 0 then
         audio_sample_play(SOUND_SPIN_JUMP, m.pos, 1)
         play_character_sound_if_no_flag(m, CHAR_SOUND_YAH_WAH_HOO, MARIO_ACTION_SOUND_PLAYED)
@@ -1066,7 +1066,7 @@ function act_sonic_fall(m)
     end
 
     local stepResult = sonic_air_action_step(m, landAction, animation, AIR_STEP_CHECK_LEDGE_GRAB, true)
-    
+
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
         if stepResult == AIR_STEP_LANDED then
             audio_sample_play(SOUND_ROLL, m.pos, 1)
@@ -1206,10 +1206,18 @@ function sonic_update(m)
         m.actionTimer = m.actionTimer + 1
     end
 
+    if e.sonic.bounceCooldown > 0 then
+        e.sonic.bounceCooldown = e.sonic.bounceCooldown - 1
+        if e.sonic.bounceCooldown == 0 then
+            play_sound(SOUND_MENU_YOSHI_GAIN_LIVES, gGlobalSoundSource)
+            set_mario_particle_flags(m, PARTICLE_SPARKLES, 0)
+        end
+    end
+
     if (m.action & ACT_FLAG_AIR) == 0 and m.action ~= ACT_BOUNCE_LAND then
         e.sonic.actionADone = false
         e.sonic.actionBDone = false
-        e.sonic.bounced = false
+        e.sonic.bounceCooldown = 0
         e.sonic.instashieldTimer = 0
     end
 
