@@ -1504,15 +1504,15 @@ extraCharacters = {
         "King of the Apes! Son of the original Donkey Kong who battled Mario in the arcades. No matter which generation, the beef continues!",
         credits = "Coop Team / VA: Dean Seavor",
         color = { r = 131, g = 30, b = 20 },
-        model = smlua_model_util_get_id("dk_geo"),
+        model = smlua_model_util_get_id("donkeykong_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-dk"),
+        lifeIcon = get_texture_info("icon-donkeykong"),
         camScale = 1.5,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-dk-meter-left"),
-                right = get_texture_info("char-select-dk-meter-right"),
+                left    = get_texture_info("char-select-donkeykong-meter-left"),
+                right   = get_texture_info("char-select-donkeykong-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -1526,10 +1526,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("dk_cap_geo"),
-            wing = smlua_model_util_get_id("dk_wing_cap_geo"),
-            metal = smlua_model_util_get_id("dk_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("dk_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("donkeykong_cap_geo"),
+            wing        = smlua_model_util_get_id("donkeykong_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("donkeykong_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("donkeykong_metal_wing_cap_geo")
         },
         palettes = {
             {
