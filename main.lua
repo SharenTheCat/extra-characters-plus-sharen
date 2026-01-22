@@ -1,5 +1,5 @@
--- name: [CS] Extra Characters Plus Dev
--- description: [CS] Extra Characters Plus\nBy: \\#00ff00\\ULTRA BROS TEAM\n\ \n\\\#ffffff\\A CS Pack done by CoopDX members that not only gives opportunity to new roster additions but also provides unique movesets.\n\ \n\\\#00ff00\\It is RECOMMENDED to have the interpolation set to ACCURATE.\n\ \n\Delete the modcache file in sm64coopdx's roaming file and restart if multiplayer causes issues.\n\ \n\\\#ff0000\\REQUIRES Character Select v1.16 or newer for all of it's features to be used.
+-- name: \\##ff87b5\\[CS] Extra Characters Plus v2.0b
+-- description: \\##ffffff\\[CS] Extra Characters Plus\nBy: \\#00ff00\\ULTRA BROS TEAM\n\ \n\\\#ffffff\\A CS Pack done by CoopDX members that not only gives opportunity to new roster additions but also provides unique movesets.\n\ \n\\\#00ff00\\It is RECOMMENDED to have the interpolation set to ACCURATE.\n\ \n\Delete the modcache file in sm64coopdx's roaming file and restart if multiplayer causes issues.\n\ \n\\\#ff0000\\REQUIRES Character Select v1.16 or newer for all of it's features to be used.
 -- category: cs
 
 local TEXT_VANILLA_CAST = "CoopDX Characters"
@@ -34,15 +34,15 @@ extraCharacters = {
         "A very rare female toad with a bubbly personality who lives in a world of male toads! She seems to enjoy her hobby as a construction boss! Although for some reason, she seems to hate unions. Wonder why?",
         credits = "Coop Team / VA: MelissaMekrose",
         color = { r = 255, g = 70, b = 161 },
-        model = smlua_model_util_get_id("toadette_geo"),
+        model = smlua_model_util_get_id("ec_toadette_geo"),
         forceChar = CT_TOAD,
-        lifeIcon = get_texture_info("icon-toadette"),
+        lifeIcon = get_texture_info("icon-ec-toadette"),
         camScale = 0.8,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-toadette-meter-left"),
-                right = get_texture_info("char-select-toadette-meter-right"),
+                left    = get_texture_info("char-select-ec-toadette-meter-left"),
+                right   = get_texture_info("char-select-ec-toadette-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -56,10 +56,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("toadette_cap_geo"),
-            wing = smlua_model_util_get_id("toadette_wing_cap_geo"),
-            metal = smlua_model_util_get_id("toadette_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("toadette_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_toadette_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_toadette_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_toadette_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_toadette_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -166,15 +166,15 @@ extraCharacters = {
         "The ruler of the Mushroom Kingdom, always ready to help Mario in his adventures and save her kingdom from the evil clutches of King Bowser! .........wait. What?! Why is she here?! How did she escape?! And who's the Peach we saw earlier?! This is confusing!",
         credits = "Coop Team / VA: SuperKirbyLover",
         color = { r = 239, g = 128, b = 177 },
-        model = smlua_model_util_get_id("peach_player_geo"),
+        model = smlua_model_util_get_id("ec_peach_player_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-peach"),
+        lifeIcon = get_texture_info("icon-ec-peach"),
         camScale = 1,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-peach-meter-left"),
-                right = get_texture_info("char-select-peach-meter-right"),
+                left    = get_texture_info("char-select-ec-peach-meter-left"),
+                right   = get_texture_info("char-select-ec-peach-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -188,10 +188,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("peach_player_cap_geo"),
-            wing = smlua_model_util_get_id("peach_player_wing_cap_geo"),
-            metal = smlua_model_util_get_id("peach_player_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("peach_player_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_peach_player_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_peach_player_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_peach_player_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_peach_player_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -374,16 +374,16 @@ extraCharacters = {
         "Princess of the Sarasaland who was once rescued by Mario against the evil alien, Tatanga! Boasting with energy, she has joined Mario and friends on occasional friendly events, such as golf, tennis, and parties! Try to stay on her good side, if you know what's best for ya!",
         credits = "Coop Team / VA: MorphiGalaxi",
         color = { r = 255, g = 97, b = 0 },
-        model = smlua_model_util_get_id("daisy_geo"),
+        model = smlua_model_util_get_id("ec_daisy_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-daisy"),
-        graffiti = get_texture_info("char-select-graffiti-daisy"),
+        lifeIcon = get_texture_info("icon-ec-daisy"),
+        graffiti = get_texture_info("char-select-ec-graffiti-daisy"),
         camScale = 1,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-daisy-meter-left"),
-                right = get_texture_info("char-select-daisy-meter-right"),
+                left    = get_texture_info("char-select-ec-daisy-meter-left"),
+                right   = get_texture_info("char-select-ec-daisy-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -397,10 +397,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("daisy_cap_geo"),
-            wing = smlua_model_util_get_id("daisy_wing_cap_geo"),
-            metal = smlua_model_util_get_id("daisy_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("daisy_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_daisy_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_daisy_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_daisy_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_daisy_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -586,15 +586,15 @@ extraCharacters = {
         "A friendly dinosuar originating from Dinosuar Land where he reunited with Mario! These cute little guys come in different colors! Might suggest to stay back when they're in a very hungry mood...",
         credits = "Coop Team / VA: FunkyLion 'Yuyake'",
         color = { r = 0, g = 255, b = 0 },
-        model = smlua_model_util_get_id("yoshi_player_geo"),
+        model = smlua_model_util_get_id("ec_yoshi_player_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-yoshi"),
+        lifeIcon = get_texture_info("icon-ec-yoshi"),
         camScale = 1.1,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-yoshi-meter-left"),
-                right = get_texture_info("char-select-yoshi-meter-right"),
+                left    = get_texture_info("char-select-ec-yoshi-meter-left"),
+                right   = get_texture_info("char-select-ec-yoshi-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -608,10 +608,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("yoshi_player_cap_geo"),
-            wing = smlua_model_util_get_id("yoshi_player_wing_cap_geo"),
-            metal = smlua_model_util_get_id("yoshi_player_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("yoshi_player_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_yoshi_player_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_yoshi_player_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_yoshi_player_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_yoshi_player_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -717,15 +717,15 @@ extraCharacters = {
         "A very feminine dinosuar who has fought against Mario during his dreams! How she came into reality is anyone's guess. It is said she was once a boy before she learned more about herself in life and eventually became a girl!",
         credits = "Coop Team / VA: LuUvvUCY 'Lucy'",
         color = { r = 254, g = 77, b = 127 },
-        model = smlua_model_util_get_id("birdo_geo"),
+        model = smlua_model_util_get_id("ec_birdo_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-birdo"),
+        lifeIcon = get_texture_info("icon-ec-birdo"),
         camScale = 1.1,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-birdo-meter-left"),
-                right = get_texture_info("char-select-birdo-meter-right"),
+                left    = get_texture_info("char-select-ec-birdo-meter-left"),
+                right   = get_texture_info("char-select-ec-birdo-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -739,10 +739,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("birdo_cap_geo"),
-            wing = smlua_model_util_get_id("birdo_wing_cap_geo"),
-            metal = smlua_model_util_get_id("birdo_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("birdo_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_birdo_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_birdo_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_birdo_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_birdo_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -851,15 +851,15 @@ extraCharacters = {
         "Owner of the Wrecking Crew company and former boss of the Mario Brothers before they moved to the plumbing business! He's had a vendetta against the bros since! Quite versitile with his hammer!",
         credits = "Coop Team / VA: VinnyVinesauce",
         color = { r = 88, g = 142, b = 255 },
-        model = smlua_model_util_get_id("foreman_spike_geo"),
+        model = smlua_model_util_get_id("ec_foreman_spike_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-spike"),
+        lifeIcon = get_texture_info("icon-ec-spike"),
         camScale = 1.1,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-foremanspike-meter-left"),
-                right = get_texture_info("char-select-foremanspike-meter-right"),
+                left    = get_texture_info("char-select-ec-foremanspike-meter-left"),
+                right   = get_texture_info("char-select-ec-foremanspike-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -873,10 +873,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("foreman_spike_cap_geo"),
-            wing = smlua_model_util_get_id("foreman_spike_wing_cap_geo"),
-            metal = smlua_model_util_get_id("foreman_spike_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("foreman_spike_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_foreman_spike_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_foreman_spike_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_foreman_spike_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_foreman_spike_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -969,16 +969,16 @@ extraCharacters = {
         "Mayor of New Donk City who was originally saved by Mario in his days as a carpenter against the big ape, Donkey Kong!",
         credits = "Coop Team / VA: BeckyVO",
         color = { r = 207, g = 66, b = 57 },
-        model = smlua_model_util_get_id("pauline_geo"),
+        model = smlua_model_util_get_id("ec_pauline_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-pauline"),
-        graffiti = get_texture_info("char-select-graffiti-pauline"),
+        lifeIcon = get_texture_info("icon-ec-pauline"),
+        graffiti = get_texture_info("char-select-ec-graffiti-pauline"),
         camScale = 1.1,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-pauline-meter-left"),
-                right = get_texture_info("char-select-pauline-meter-right"),
+                left    = get_texture_info("char-select-ec-pauline-meter-left"),
+                right   = get_texture_info("char-select-ec-pauline-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -992,10 +992,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("pauline_cap_geo"),
-            wing = smlua_model_util_get_id("pauline_wing_cap_geo"),
-            metal = smlua_model_util_get_id("pauline_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("pauline_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_pauline_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_pauline_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_pauline_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_pauline_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -1180,16 +1180,16 @@ extraCharacters = {
         "Protector of the cosmos and mother to billions of Lumas. She was once a little girl who lost her own mother after traveling the cosmos to help a little Luma find their own mother. She has taken her role as their mother since.",
         credits = "Coop Team / VA: GauntletQueen",
         color = { r = 143, g = 239, b = 246 },
-        model = smlua_model_util_get_id("rosalina_geo"),
+        model = smlua_model_util_get_id("ec_rosalina_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-rosalina"),
-        graffiti = get_texture_info("char-select-graffiti-rosalina"),
+        lifeIcon = get_texture_info("icon-ec-rosalina"),
+        graffiti = get_texture_info("char-select-ec-graffiti-rosalina"),
         camScale = 1.5,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-rosalina-meter-left"),
-                right = get_texture_info("char-select-rosalina-meter-right"),
+                left    = get_texture_info("char-select-ec-rosalina-meter-left"),
+                right   = get_texture_info("char-select-ec-rosalina-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -1203,10 +1203,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("rosalina_cap_geo"),
-            wing = smlua_model_util_get_id("rosalina_wing_cap_geo"),
-            metal = smlua_model_util_get_id("rosalina_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("rosalina_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_rosalina_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_rosalina_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_rosalina_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_rosalina_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -1383,15 +1383,15 @@ extraCharacters = {
         description = "Who is this?! A Princess Peach imposter?! A very angsty girl who holds a very large axe for neferious purposes! How did she get here?! And why?",
         credits     = "Coop Team / VA: SlashOLantern",
         color       = { r = 255, g = 129, b = 69 },
-        model       = smlua_model_util_get_id("wapeach_geo"),
+        model       = smlua_model_util_get_id("ec_wapeach_geo"),
         forceChar   = CT_MARIO,
-        lifeIcon    = get_texture_info("icon-wapeach"),
+        lifeIcon    = get_texture_info("icon-ec-wapeach"),
         camScale    = 1,
         offset      = 0,
         meter = {
             label = {
-                left    = get_texture_info("char-select-wapeach-meter-left"),
-                right   = get_texture_info("char-select-wapeach-meter-right"),
+                left    = get_texture_info("char-select-ec-wapeach-meter-left"),
+                right   = get_texture_info("char-select-ec-wapeach-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -1405,10 +1405,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("wapeach_cap_geo"),
-            wing = smlua_model_util_get_id("wapeach_wing_cap_geo"),
-            metal = smlua_model_util_get_id("wapeach_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("wapeach_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_wapeach_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_wapeach_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_wapeach_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_wapeach_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -1504,15 +1504,15 @@ extraCharacters = {
         "King of the Apes! Son of the original Donkey Kong who battled Mario in the arcades. No matter which generation, the beef continues!",
         credits = "Coop Team / VA: Dean Seavor",
         color = { r = 131, g = 30, b = 20 },
-        model = smlua_model_util_get_id("dk_geo"),
+        model = smlua_model_util_get_id("ec_donkeykong_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-dk"),
+        lifeIcon = get_texture_info("icon-ec-donkeykong"),
         camScale = 1.5,
         offset = 0,
         meter = {
             label = {
-                left = get_texture_info("char-select-dk-meter-left"),
-                right = get_texture_info("char-select-dk-meter-right"),
+                left    = get_texture_info("char-select-ec-donkeykong-meter-left"),
+                right   = get_texture_info("char-select-ec-donkeykong-meter-right"),
             },
             pie = {
                 [1] = get_texture_info("char_select_custom_meter_pie1"),
@@ -1526,10 +1526,10 @@ extraCharacters = {
             }
         },
         caps = {
-            normal = smlua_model_util_get_id("dk_cap_geo"),
-            wing = smlua_model_util_get_id("dk_wing_cap_geo"),
-            metal = smlua_model_util_get_id("dk_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("dk_metal_wing_cap_geo")
+            normal      = smlua_model_util_get_id("ec_donkeykong_cap_geo"),
+            wing        = smlua_model_util_get_id("ec_donkeykong_wing_cap_geo"),
+            metal       = smlua_model_util_get_id("ec_donkeykong_metal_cap_geo"),
+            metalWing   = smlua_model_util_get_id("ec_donkeykong_metal_wing_cap_geo")
         },
         palettes = {
             {
@@ -1714,18 +1714,18 @@ extraCharacters = {
         "A rebellious teenage hedgehog with a blue of attitude, originating from Christmas Island. How'd he got here is anyone's guess.",
         credits = "Coop Team / VA: ReeseiMental",
         color = { r = 0, g = 0, b = 255 },
-        model = smlua_model_util_get_id("segasonic_geo"),
+        model = smlua_model_util_get_id("ec_segasonic_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-segasonic"),
-        graffiti = get_texture_info("char-select-graffiti-sonic"),
+        lifeIcon = get_texture_info("icon-ec-segasonic"),
+        graffiti = get_texture_info("char-select-ec-graffiti-sonic"),
         camScale = 0.9,
         offset = 0,
         meter = nil, -- meter code in moveset
         caps = {
-            normal =     smlua_model_util_get_id("segasonic_cap_geo"),
-            wing =       smlua_model_util_get_id("segasonic_wing_cap_geo"),
-            metal =      smlua_model_util_get_id("segasonic_metal_cap_geo"),
-            metalWing =  smlua_model_util_get_id("segasonic_metal_wing_cap_geo")
+            normal =     smlua_model_util_get_id("ec_segasonic_cap_geo"),
+            wing =       smlua_model_util_get_id("ec_segasonic_wing_cap_geo"),
+            metal =      smlua_model_util_get_id("ec_segasonic_metal_cap_geo"),
+            metalWing =  smlua_model_util_get_id("ec_segasonic_metal_wing_cap_geo")
         },
         palettes = {
             {

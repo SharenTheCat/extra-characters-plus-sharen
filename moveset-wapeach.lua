@@ -13,10 +13,10 @@ _G.ACT_AXE_SPIN_DIZZY = allocate_mario_action(ACT_GROUP_MOVING | ACT_FLAG_MOVING
 local function bhv_axe_attack_init(o)
     o.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_SET_FACE_ANGLE_TO_MOVE_ANGLE
 
-    o.oDamageOrCoinValue = 2
+    o.oDamageOrCoinValue = 4
     o.oNumLootCoins = 0
     o.oHealth = 0
-    o.hitboxRadius = 60
+    o.hitboxRadius = 100
     o.hitboxHeight = 80
     o.hurtboxRadius = 60
     o.hurtboxHeight = 80
@@ -300,3 +300,39 @@ hook_mario_action(ACT_AXE_CHOP, act_axe_chop)
 hook_mario_action(ACT_AXE_SPIN, act_axe_spin)
 hook_mario_action(ACT_AXE_SPIN_AIR, act_axe_spin_air)
 hook_mario_action(ACT_AXE_SPIN_DIZZY, act_axe_spin_dizzy)
+
+-- Have WaPeach deal 4 damage with axe spin
+function wapeach_on_pvp_attack(attacker, victim, interaction)
+    if attacker.action ~= ACT_AXE_SPIN and attacker.action ~= ACT_AXE_SPIN_AIR then return end
+
+    set_mario_particle_flags(attacker, PARTICLE_VERTICAL_STAR, 0)
+
+    -- deal 3 extra damage (4 total)
+    local extraDmg = 3
+    if attacker.flags & MARIO_METAL_CAP ~= 0 then
+        extraDmg = extraDmg * 2
+    end
+
+    if victim.flags & MARIO_METAL_CAP == 0 and gServerSettings.playerInteractions == PLAYER_INTERACTIONS_PVP then
+        victim.hurtCounter = victim.hurtCounter + extraDmg * 4
+    end
+
+    -- switch to hard knockback action
+    if victim.action == ACT_SOFT_FORWARD_GROUND_KB then
+        set_mario_action(victim, ACT_HARD_FORWARD_GROUND_KB, 0)
+    elseif victim.action == ACT_SOFT_BACKWARD_GROUND_KB then
+        set_mario_action(victim, ACT_HARD_BACKWARD_GROUND_KB, 0)
+    elseif victim.action == ACT_FORWARD_AIR_KB then
+        set_mario_action(victim, ACT_HARD_FORWARD_AIR_KB, 0)
+    elseif victim.action == ACT_BACKWARD_AIR_KB then
+        set_mario_action(victim, ACT_HARD_BACKWARD_AIR_KB, 0)
+    end
+end
+hook_event(HOOK_ON_PVP_ATTACK, wapeach_on_pvp_attack) -- not a moveset hook because otherwise it double-fires
+
+function wapeach_on_attack_object(m, o, interaction)
+    if m.action ~= ACT_AXE_SPIN and m.action ~= ACT_AXE_SPIN_AIR then return end
+
+    set_mario_particle_flags(m, PARTICLE_VERTICAL_STAR, 0)
+end
+hook_event(HOOK_ON_ATTACK_OBJECT, wapeach_on_attack_object)

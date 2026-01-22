@@ -33,7 +33,7 @@ local SOUND_COUNTDOWN_CD        = audio_sample_load("z_sfx_sonic_countdown.ogg")
 
 -- Sonic textures
 local TEX_HOMING_CURSOR = get_texture_info("homing-cursor")
-local TEX_SONIC_RING_METER = get_texture_info("char-select-sonic-ring-meter")
+local TEX_SONIC_RING_METER = get_texture_info("char-select-ec-sonic-ring-meter")
 
 -- Sonic animations
 local CUSTOM_CHAR_ANIM_SONIC_RUN = 'sonic_running_2'
@@ -1803,8 +1803,8 @@ end
 
 sonicVanillaMeter = {
     label = {
-        left = get_texture_info("char-select-sonic-meter-left"),
-        right = get_texture_info("char-select-sonic-meter-right"),
+        left = get_texture_info("char-select-ec-sonic-meter-left"),
+        right = get_texture_info("char-select-ec-sonic-meter-right"),
     },
     pie = {
         [1] = get_texture_info("char_select_custom_meter_pie1"),
