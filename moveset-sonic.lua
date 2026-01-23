@@ -9,9 +9,9 @@ local sPrevRings = 0
 local sRingTimeBetweenDamages = 0
 local sRingFlingFactor = 0
 local sPrevNonSonicHealth = nil
--- Hedgehog Nerf decreases values for a more balanced multiplayer experience. Temporary until Balanced Movesets is applied to CS.
-local HEDGEHOG_NERF = false
-if HEDGEHOG_NERF == false then
+-- SlowDownBoots decreases values for a more balanced multiplayer experience. Temporary until Balanced Movesets is applied to CS.
+local sSlowDownBoots = true
+if sSlowDownBoots == false then
     HEDGEHOG_SPEED = 128
     HEDGEHOG_HEIGHT = 32
 else
@@ -221,7 +221,7 @@ local function update_sonic_running_speed(m)
 
     if (m.floor and m.floor.type == SURFACE_SLOW) then
         maxTargetSpeed = 48
-    elseif HEDGEHOG_NERF == true then
+    elseif sSlowDownBoots == true then
         maxTargetSpeed = 40
     else
         maxTargetSpeed = 64
@@ -722,7 +722,7 @@ local function act_air_spin(m)
 
     if m.actionArg == 1 then -- Air dash and wall bounce.
         if not e.sonic.actionADone then
-            if HEDGEHOG_NERF == false then
+            if sSlowDownBoots == false then
                 e.sonic.prevForwardVel = m.forwardVel
                 audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
                 m.vel.y = 0
@@ -1119,7 +1119,7 @@ local function act_bounce_land(m)
     stationary_ground_step(m)
 
     audio_sample_play(SOUND_SONIC_BOUNCE, m.pos, 1)
-    if HEDGEHOG_NERF == false then
+    if sSlowDownBoots == false then
         set_sonic_jump_vel(m, 85)
         return set_mario_action(m, ACT_AIR_SPIN, 0)
     else
