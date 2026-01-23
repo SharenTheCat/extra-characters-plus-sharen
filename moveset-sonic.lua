@@ -9,6 +9,15 @@ local sPrevRings = 0
 local sRingTimeBetweenDamages = 0
 local sRingFlingFactor = 0
 local sPrevNonSonicHealth = nil
+-- Hedgehog Nerf decreases values for a more balanced multiplayer experience. Temporary until Balanced Movesets is applied to CS.
+local HEDGEHOG_NERF = false
+if HEDGEHOG_NERF == false then
+    HEDGEHOG_SPEED = 128
+    HEDGEHOG_HEIGHT = 32
+else
+    HEDGEHOG_SPEED = 64
+    HEDGEHOG_HEIGHT = 20
+end
 
 -- Sonic actions
 _G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
@@ -212,6 +221,8 @@ local function update_sonic_running_speed(m)
 
     if (m.floor and m.floor.type == SURFACE_SLOW) then
         maxTargetSpeed = 48
+    elseif HEDGEHOG_NERF == true then
+        maxTargetSpeed = 40
     else
         maxTargetSpeed = 64
     end
@@ -711,20 +722,37 @@ local function act_air_spin(m)
 
     if m.actionArg == 1 then -- Air dash and wall bounce.
         if not e.sonic.actionADone then
-            e.sonic.prevForwardVel = m.forwardVel
-            audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
-            m.vel.y = 0
+            if HEDGEHOG_NERF == false then
+                e.sonic.prevForwardVel = m.forwardVel
+                audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
+                m.vel.y = 0
 
-            if m.forwardVel < 0 then
-                m.vel.x = m.vel.x + 30 * sins(m.faceAngle.y)
-                m.vel.z = m.vel.z + 30 * coss(m.faceAngle.y)
-            elseif m.forwardVel < 72 then
-                m.vel.x = m.vel.x + 20 * sins(m.faceAngle.y)
-                m.vel.z = m.vel.z + 20 * coss(m.faceAngle.y)
+                if m.forwardVel < 0 then
+                    m.vel.x = m.vel.x + 30 * sins(m.faceAngle.y)
+                    m.vel.z = m.vel.z + 30 * coss(m.faceAngle.y)
+                elseif m.forwardVel < 72 then
+                    m.vel.x = m.vel.x + 20 * sins(m.faceAngle.y)
+                    m.vel.z = m.vel.z + 20 * coss(m.faceAngle.y)
+                end
+
+                m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
+                e.sonic.actionADone = true
+            else
+                e.sonic.prevForwardVel = m.forwardVel
+                audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
+                m.vel.y = 0
+
+                if m.forwardVel < 0 then
+                    m.vel.x = m.vel.x + 20 * sins(m.faceAngle.y)
+                    m.vel.z = m.vel.z + 20 * coss(m.faceAngle.y)
+                elseif m.forwardVel < 50 then
+                    m.vel.x = m.vel.x + 10 * sins(m.faceAngle.y)
+                    m.vel.z = m.vel.z + 10 * coss(m.faceAngle.y)
+                end
+
+                m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
+                e.sonic.actionADone = true
             end
-
-            m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
-            e.sonic.actionADone = true
         end
 
         if m.actionTimer < 10 then
@@ -749,9 +777,9 @@ local function act_air_spin(m)
 
                 local realVelFloored = math.max(math.abs(e.sonic.realFVel), 20)
                 if m.actionTimer < 2 and e.sonic.wallSpam == 0 then
-                    m.vel.y = 30 * realVelFloored / 32
+                    m.vel.y = 30 * realVelFloored / HEDGEHOG_HEIGHT
                 else
-                    m.vel.y = 20 * realVelFloored / 32
+                    m.vel.y = 20 * realVelFloored / HEDGEHOG_HEIGHT
                 end
                 m.vel.y = m.vel.y - e.sonic.wallSpam
                 m.vel.x = realVelFloored * sins(wallAngle)
@@ -760,9 +788,7 @@ local function act_air_spin(m)
                 m.actionArg = 0
                 e.sonic.actionADone = false
             end
-
         end
-
     end
 
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
@@ -885,7 +911,7 @@ end
 local function act_spin_dash_charge(m)
     local e = gCharacterStates[m.playerIndex]
     local MINDASH = 4
-    local MAXDASH = 128
+    local MAXDASH = HEDGEHOG_SPEED
     local decel = e.sonic.spinCharge / 32
 
     if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
@@ -1092,8 +1118,13 @@ local function act_bounce_land(m)
     stationary_ground_step(m)
 
     audio_sample_play(SOUND_SONIC_BOUNCE, m.pos, 1)
-    set_sonic_jump_vel(m, 85)
-    return set_mario_action(m, ACT_AIR_SPIN, 0)
+    if HEDGEHOG_NERF == false then
+        set_sonic_jump_vel(m, 85)
+        return set_mario_action(m, ACT_AIR_SPIN, 0)
+    else
+        set_sonic_jump_vel(m, 60)
+        return set_mario_action(m, ACT_AIR_SPIN, 0)
+    end
 end
 
 local waterActions = {
