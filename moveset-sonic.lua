@@ -10,7 +10,7 @@ local sRingTimeBetweenDamages = 0
 local sRingFlingFactor = 0
 local sPrevNonSonicHealth = nil
 -- SlowDownBoots decreases values for a more balanced multiplayer experience. Temporary until Balanced Movesets is applied to CS.
-local sSlowDownBoots = true
+local sSlowDownBoots = false
 if sSlowDownBoots == false then
     HEDGEHOG_SPEED = 128
     HEDGEHOG_HEIGHT = 32
