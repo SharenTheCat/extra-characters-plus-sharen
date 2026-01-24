@@ -1905,8 +1905,8 @@ local ultraBrosCredits = {
 
 local function on_character_select_load()
     for i, char in pairs(extraCharacters) do
-        tablePos = character_add(name, description, credits, color, model, forceChar, lifeIcon, camScale, offset, meter, graffiti)
         local _ENV = setmetatable(char, { __index = _G })
+        tablePos = character_add(name, description, credits, color, model, forceChar, lifeIcon, camScale, offset, meter, graffiti)
         if caps then character_add_caps(model, caps) end
         if voices then character_add_voice(model, voices) end
         -- if costumes then character_add_costume(model, costumes) end
