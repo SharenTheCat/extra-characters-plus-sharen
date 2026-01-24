@@ -61,6 +61,34 @@ function geo_ball_switch(n)
     end
 end
 
+-- SlowDownBoots 
+
+--- @param n GraphNode | FnGraphNode
+--- Switches states when SlowDownBoots is true.
+function custom_slowdown_right(n)
+    local switch = cast_graph_node(n)
+    local m = geo_get_mario_state()
+    local e = gCharacterStates[m.playerIndex]
+
+    if sSlowDownBoots == true then
+        switch.selectedCase = 1
+    else 
+        switch.selectedCase = 0
+    end
+end
+
+function custom_slowdown_left(n)
+    local switch = cast_graph_node(n)
+    local m = geo_get_mario_state()
+    local e = gCharacterStates[m.playerIndex]
+
+    if sSlowDownBoots == true then
+        switch.selectedCase = 1
+    else
+        switch.selectedCase = 0
+    end
+end
+
 -- Spindash States --
 
 --- @param n GraphNode | FnGraphNode

@@ -11,14 +11,6 @@ local sRingFlingFactor = 0
 local sPrevNonSonicHealth = nil
 -- SlowDownBoots decreases values for a more balanced multiplayer experience. Temporary until Balanced Movesets is applied to CS.
 local sSlowDownBoots = false
-if sSlowDownBoots == false then
-    HEDGEHOG_SPEED = 128
-    HEDGEHOG_HEIGHT = 32
-else
-    HEDGEHOG_SPEED = 64
-    HEDGEHOG_HEIGHT = 20
-end
-
 -- Sonic actions
 _G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
 _G.ACT_SONIC_FALL         = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE)
@@ -1118,12 +1110,13 @@ local function act_bounce_land(m)
 
     stationary_ground_step(m)
 
+    -- Changes Bounce Height
     audio_sample_play(SOUND_SONIC_BOUNCE, m.pos, 1)
     if sSlowDownBoots == false then
         set_sonic_jump_vel(m, 85)
         return set_mario_action(m, ACT_AIR_SPIN, 0)
     else
-        set_sonic_jump_vel(m, 60)
+        set_sonic_jump_vel(m, 70)
         return set_mario_action(m, ACT_AIR_SPIN, 0)
     end
 end
