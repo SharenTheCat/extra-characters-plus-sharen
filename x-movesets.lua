@@ -63,13 +63,25 @@ hook_event(HOOK_ON_SET_MARIO_ACTION, reset_from_action)
 --  Main  --
 ------------
 
-local movesetHooks = {}
+local chars = { "Mario", "Luigi", "Toad", "Waluigi", "Wario" }
+
+-- inject extra characters
 for _, char in ipairs(extraCharacters) do
-    movesetHooks[char.name] = require ("movesets/" .. char.name)
+    table.insert(chars, char.name)
+end
+
+local movesetHooks = {}
+for _, name in ipairs(chars) do
+    movesetHooks[name] = require ("movesets/" .. name)
 end
 
 local function on_character_select_load()
-    for _, char in pairs(extraCharacters) do
+    -- inject vanilla characters
+    for i = 1, CT_MAX do
+        table.insert(extraCharacters, { name = chars[i], tablePos = i - 1 })
+    end
+
+    for _, char in ipairs(extraCharacters) do
         for _, hook in ipairs(movesetHooks[char.name]) do
             if hook.global then
                 hook_event(hook[1], hook[2])
